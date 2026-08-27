@@ -38,3 +38,7 @@ Gerenciador de tarefas estilo Kanban — projeto full stack em desenvolvimento.
 5. Abra [http://localhost:3000](http://localhost:3000).
 
 > Este README ainda está em construção — a documentação completa do projeto será finalizada ao final do desenvolvimento.
+
+## Sobre este projeto
+
+Este projeto foi construído, em grande parte, com o auxílio do **Claude** (Anthropic). Usei o desenvolvimento do TaskForge para me aprofundar no Claude Code e dominar a ferramenta como parte do meu fluxo de trabalho — sem deixar de lado minhas próprias habilidades técnicas e raciocínio, que guiaram cada decisão de arquitetura, revisão de código e critério de qualidade do produto final.
