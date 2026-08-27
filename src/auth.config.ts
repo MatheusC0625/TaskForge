@@ -1,6 +1,9 @@
 import type { NextAuthConfig } from "next-auth";
 
+const PROTECTED_PREFIXES = ["/dashboard", "/projects"];
+
 export const authConfig = {
+  trustHost: true,
   pages: {
     signIn: "/login",
   },
@@ -8,7 +11,9 @@ export const authConfig = {
   callbacks: {
     authorized({ auth, request }) {
       const isLoggedIn = !!auth?.user;
-      const isProtected = request.nextUrl.pathname.startsWith("/dashboard");
+      const isProtected = PROTECTED_PREFIXES.some((prefix) =>
+        request.nextUrl.pathname.startsWith(prefix),
+      );
 
       if (isProtected) return isLoggedIn;
       return true;
