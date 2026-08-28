@@ -23,19 +23,32 @@ Gerenciador de tarefas estilo Kanban — projeto full stack em desenvolvimento.
    cp .env.example .env
    ```
 
+   Gere um valor para `AUTH_SECRET` e substitua no `.env`:
+
+   ```bash
+   openssl rand -base64 32
+   ```
+
 3. Instale as dependências:
 
    ```bash
    npm install
    ```
 
-4. Rode o servidor de desenvolvimento:
+4. Gere o Prisma Client e aplique as migrations no banco:
+
+   ```bash
+   npx prisma generate
+   npx prisma migrate deploy
+   ```
+
+5. Rode o servidor de desenvolvimento:
 
    ```bash
    npm run dev
    ```
 
-5. Abra [http://localhost:3000](http://localhost:3000).
+6. Abra [http://localhost:3000](http://localhost:3000).
 
 > Este README ainda está em construção — a documentação completa do projeto será finalizada ao final do desenvolvimento.
 
