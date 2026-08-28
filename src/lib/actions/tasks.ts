@@ -107,3 +107,58 @@ export async function deleteTask(taskId: string): Promise<void> {
   await prisma.task.delete({ where: { id: taskId } });
   revalidatePath(`/projects/${task.projectId}`);
 }
+
+export async function moveTask(
+  taskId: string,
+  toColumnId: string,
+  toIndex: number,
+): Promise<void> {
+  const session = await auth();
+  if (!session?.user) redirect("/login");
+
+  const task = await requireTaskOwnership(taskId, session.user.id);
+  const toColumn = await requireColumnInProject(toColumnId, session.user.id);
+
+  if (toColumn.projectId !== task.projectId) {
+    throw new Error("Coluna inválida.");
+  }
+
+  const fromColumnId = task.columnId;
+
+  const [fromTasks, toTasksRaw] = await Promise.all([
+    fromColumnId === toColumnId
+      ? Promise.resolve([])
+      : prisma.task.findMany({
+          where: { columnId: fromColumnId },
+          orderBy: { order: "asc" },
+          select: { id: true },
+        }),
+    prisma.task.findMany({
+      where: { columnId: toColumnId },
+      orderBy: { order: "asc" },
+      select: { id: true },
+    }),
+  ]);
+
+  const toTaskIds = toTasksRaw.map((t) => t.id).filter((id) => id !== taskId);
+  const clampedIndex = Math.max(0, Math.min(toIndex, toTaskIds.length));
+  toTaskIds.splice(clampedIndex, 0, taskId);
+
+  const updates = [
+    ...toTaskIds.map((id, index) =>
+      prisma.task.update({
+        where: { id },
+        data: { order: index, columnId: toColumnId },
+      }),
+    ),
+    ...(fromColumnId !== toColumnId
+      ? fromTasks
+          .filter((t) => t.id !== taskId)
+          .map((t, index) => prisma.task.update({ where: { id: t.id }, data: { order: index } }))
+      : []),
+  ];
+
+  await prisma.$transaction(updates);
+
+  revalidatePath(`/projects/${task.projectId}`);
+}
