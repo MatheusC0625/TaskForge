@@ -1,6 +1,7 @@
 "use client";
 
 import { PriorityBadge } from "@/components/ui/priority-badge";
+import { formatDueDate, isOverdue } from "@/lib/date";
 import type { Priority } from "@/generated/prisma/enums";
 
 export type TaskCardData = {
@@ -12,18 +13,6 @@ export type TaskCardData = {
   subtaskTotal: number;
   subtaskDone: number;
 };
-
-function formatDueDate(dueDate: string) {
-  const date = new Date(dueDate);
-  return date.toLocaleDateString("pt-BR", { day: "2-digit", month: "2-digit" });
-}
-
-function isOverdue(dueDate: string) {
-  const date = new Date(dueDate);
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
-  return date < today;
-}
 
 export function TaskCard({ task, onOpen }: { task: TaskCardData; onOpen: () => void }) {
   return (
