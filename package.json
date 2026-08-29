@@ -1,6 +1,7 @@
 {
   "name": "taskforge",
   "version": "0.1.0",
+  "description": "Gerenciador de tarefas estilo Kanban com autenticação, banco de dados real, drag & drop e dark mode.",
   "private": true,
   "scripts": {
     "dev": "next dev",
