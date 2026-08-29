@@ -67,14 +67,21 @@ export default async function ProjectPage({
   }));
 
   return (
-    <div className="mx-auto flex w-full max-w-6xl flex-1 flex-col gap-6 px-6 py-10">
+    <div className="mx-auto flex w-full max-w-6xl flex-1 flex-col gap-6 px-4 py-8 sm:px-6 sm:py-10">
       <div>
-        <Link href="/projects" className="text-sm text-neutral-500 hover:underline">
+        <Link
+          href="/projects"
+          className="text-sm text-neutral-500 hover:underline dark:text-neutral-400"
+        >
           ← Projetos
         </Link>
-        <h1 className="mt-1 text-xl font-semibold text-neutral-900">{project.name}</h1>
+        <h1 className="mt-1 text-xl font-semibold text-neutral-900 dark:text-neutral-100">
+          {project.name}
+        </h1>
         {project.description && (
-          <p className="mt-1 text-sm text-neutral-500">{project.description}</p>
+          <p className="mt-1 text-sm text-neutral-500 dark:text-neutral-400">
+            {project.description}
+          </p>
         )}
       </div>
 

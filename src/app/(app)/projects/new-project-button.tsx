@@ -13,7 +13,7 @@ export function NewProjectButton() {
       <button
         type="button"
         onClick={() => modalRef.current?.open()}
-        className="rounded-lg bg-neutral-900 px-4 py-2 text-sm font-medium text-white transition hover:bg-neutral-800"
+        className="rounded-lg bg-neutral-900 px-4 py-2 text-sm font-medium text-white transition hover:bg-neutral-800 active:scale-[0.98] dark:bg-neutral-100 dark:text-neutral-900 dark:hover:bg-neutral-200"
       >
         + Novo projeto
       </button>
