@@ -18,7 +18,7 @@ import { NewTaskForm } from "./new-task-form";
 import { TaskCard } from "./task-card";
 import { SortableTaskCard } from "./sortable-task-card";
 import { DroppableColumn } from "./droppable-column";
-import { TaskPanel, type TaskDetail, type ProjectTag } from "./task-panel";
+import type { TaskDetail } from "./task-panel";
 import { moveTask } from "@/lib/actions/tasks";
 
 export type BoardColumn = {
@@ -65,13 +65,14 @@ function toCardData(task: TaskDetail) {
 export function Board({
   projectId,
   columns,
-  projectTags,
+  filterPredicate,
+  onSelectTask,
 }: {
   projectId: string;
   columns: BoardColumn[];
-  projectTags: ProjectTag[];
+  filterPredicate: (task: TaskDetail) => boolean;
+  onSelectTask: (taskId: string) => void;
 }) {
-  const [selectedTaskId, setSelectedTaskId] = useState<string | null>(null);
   const [activeTask, setActiveTask] = useState<TaskDetail | null>(null);
   const [optimisticColumns, applyMove] = useOptimistic(columns, moveTaskInColumns);
   const [, startTransition] = useTransition();
@@ -79,10 +80,6 @@ export function Board({
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 8 } }),
   );
-
-  const selectedTask = optimisticColumns
-    .flatMap((column) => column.tasks)
-    .find((task) => task.id === selectedTaskId);
 
   const handleDragStart = (event: DragStartEvent) => {
     const task = optimisticColumns
@@ -123,15 +120,16 @@ export function Board({
   };
 
   return (
-    <div>
-      <DndContext
-        sensors={sensors}
-        collisionDetection={closestCorners}
-        onDragStart={handleDragStart}
-        onDragEnd={handleDragEnd}
-      >
-        <div className="flex gap-4 overflow-x-auto pb-4">
-          {optimisticColumns.map((column, index) => (
+    <DndContext
+      sensors={sensors}
+      collisionDetection={closestCorners}
+      onDragStart={handleDragStart}
+      onDragEnd={handleDragEnd}
+    >
+      <div className="flex gap-4 overflow-x-auto pb-4">
+        {optimisticColumns.map((column, index) => {
+          const visibleTasks = column.tasks.filter(filterPredicate);
+          return (
             <div
               key={column.id}
               className="flex w-80 shrink-0 flex-col gap-3 rounded-xl border border-neutral-200 bg-neutral-50/50 p-3"
@@ -145,47 +143,42 @@ export function Board({
 
               <DroppableColumn columnId={column.id}>
                 <SortableContext
-                  items={column.tasks.map((task) => task.id)}
+                  items={visibleTasks.map((task) => task.id)}
                   strategy={verticalListSortingStrategy}
                 >
-                  {column.tasks.map((task) => (
+                  {visibleTasks.map((task) => (
                     <SortableTaskCard
                       key={task.id}
                       task={toCardData(task)}
                       columnId={column.id}
-                      onOpen={() => setSelectedTaskId(task.id)}
+                      onOpen={() => onSelectTask(task.id)}
                     />
                   ))}
                 </SortableContext>
+                {visibleTasks.length === 0 && column.tasks.length > 0 && (
+                  <p className="px-1 py-1 text-xs text-neutral-400">
+                    Nenhuma tarefa corresponde aos filtros.
+                  </p>
+                )}
               </DroppableColumn>
 
               <NewTaskForm columnId={column.id} />
             </div>
-          ))}
+          );
+        })}
 
-          <div className="w-72 shrink-0">
-            <NewColumnForm projectId={projectId} />
-          </div>
+        <div className="w-72 shrink-0">
+          <NewColumnForm projectId={projectId} />
         </div>
+      </div>
 
-        <DragOverlay>
-          {activeTask ? (
-            <div className="w-80 rotate-2 opacity-90">
-              <TaskCard task={toCardData(activeTask)} onOpen={() => {}} />
-            </div>
-          ) : null}
-        </DragOverlay>
-      </DndContext>
-
-      {selectedTask && (
-        <TaskPanel
-          key={selectedTask.id}
-          task={selectedTask}
-          projectId={projectId}
-          projectTags={projectTags}
-          onClose={() => setSelectedTaskId(null)}
-        />
-      )}
-    </div>
+      <DragOverlay>
+        {activeTask ? (
+          <div className="w-80 rotate-2 opacity-90">
+            <TaskCard task={toCardData(activeTask)} onOpen={() => {}} />
+          </div>
+        ) : null}
+      </DragOverlay>
+    </DndContext>
   );
 }
