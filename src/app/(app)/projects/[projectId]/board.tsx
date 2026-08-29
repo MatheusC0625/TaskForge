@@ -132,7 +132,7 @@ export function Board({
           return (
             <div
               key={column.id}
-              className="flex w-80 shrink-0 flex-col gap-3 rounded-xl border border-neutral-200 bg-neutral-50/50 p-3"
+              className="flex w-72 shrink-0 flex-col gap-3 rounded-xl border border-neutral-200 bg-neutral-50/50 p-3 sm:w-80 dark:border-neutral-800 dark:bg-neutral-900/40"
             >
               <ColumnItem
                 column={column}
@@ -156,7 +156,7 @@ export function Board({
                   ))}
                 </SortableContext>
                 {visibleTasks.length === 0 && column.tasks.length > 0 && (
-                  <p className="px-1 py-1 text-xs text-neutral-400">
+                  <p className="px-1 py-1 text-xs text-neutral-400 dark:text-neutral-500">
                     Nenhuma tarefa corresponde aos filtros.
                   </p>
                 )}
@@ -167,14 +167,14 @@ export function Board({
           );
         })}
 
-        <div className="w-72 shrink-0">
+        <div className="w-64 shrink-0 sm:w-72">
           <NewColumnForm projectId={projectId} />
         </div>
       </div>
 
       <DragOverlay>
         {activeTask ? (
-          <div className="w-80 rotate-2 opacity-90">
+          <div className="w-72 rotate-2 opacity-90 sm:w-80">
             <TaskCard task={toCardData(activeTask)} onOpen={() => {}} />
           </div>
         ) : null}

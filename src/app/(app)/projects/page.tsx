@@ -18,19 +18,21 @@ export default async function ProjectsPage() {
   });
 
   return (
-    <div className="mx-auto flex w-full max-w-4xl flex-1 flex-col gap-6 px-6 py-10">
-      <div className="flex items-center justify-between">
+    <div className="mx-auto flex w-full max-w-4xl flex-1 flex-col gap-6 px-4 py-8 sm:px-6 sm:py-10">
+      <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h1 className="text-xl font-semibold text-neutral-900">Projetos</h1>
-          <p className="text-sm text-neutral-500">Seus quadros Kanban.</p>
+          <h1 className="text-xl font-semibold text-neutral-900 dark:text-neutral-100">
+            Projetos
+          </h1>
+          <p className="text-sm text-neutral-500 dark:text-neutral-400">Seus quadros Kanban.</p>
         </div>
         <NewProjectButton />
       </div>
 
       {projects.length === 0 ? (
-        <div className="flex flex-1 flex-col items-center justify-center gap-3 rounded-xl border border-dashed border-neutral-300 py-20 text-center">
-          <p className="text-neutral-900">Você ainda não tem projetos.</p>
-          <p className="max-w-xs text-sm text-neutral-500">
+        <div className="flex flex-1 flex-col items-center justify-center gap-3 rounded-xl border border-dashed border-neutral-300 py-20 text-center dark:border-neutral-700">
+          <p className="text-neutral-900 dark:text-neutral-100">Você ainda não tem projetos.</p>
+          <p className="max-w-xs text-sm text-neutral-500 dark:text-neutral-400">
             Crie o primeiro projeto para organizar suas tarefas em um quadro Kanban.
           </p>
           <div className="mt-2">
