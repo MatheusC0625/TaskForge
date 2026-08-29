@@ -2,6 +2,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { auth } from "@/auth";
 import { SignOutButton } from "@/components/sign-out-button";
+import { ThemeToggle } from "@/components/theme-toggle";
 
 export default async function AppLayout({ children }: { children: React.ReactNode }) {
   const session = await auth();
@@ -9,20 +10,25 @@ export default async function AppLayout({ children }: { children: React.ReactNod
 
   return (
     <div className="flex min-h-screen flex-col">
-      <header className="flex items-center justify-between border-b border-neutral-200 px-6 py-4">
+      <header className="flex flex-wrap items-center justify-between gap-3 border-b border-neutral-200 px-4 py-4 sm:px-6 dark:border-neutral-800">
         <div className="flex items-center gap-6">
-          <span className="text-lg font-semibold text-neutral-900">TaskForge</span>
-          <nav className="flex items-center gap-4 text-sm text-neutral-600">
-            <Link href="/dashboard" className="hover:text-neutral-900">
+          <span className="text-lg font-semibold text-neutral-900 dark:text-neutral-100">
+            TaskForge
+          </span>
+          <nav className="flex items-center gap-4 text-sm text-neutral-600 dark:text-neutral-400">
+            <Link href="/dashboard" className="hover:text-neutral-900 dark:hover:text-neutral-100">
               Dashboard
             </Link>
-            <Link href="/projects" className="hover:text-neutral-900">
+            <Link href="/projects" className="hover:text-neutral-900 dark:hover:text-neutral-100">
               Projetos
             </Link>
           </nav>
         </div>
-        <div className="flex items-center gap-4">
-          <span className="text-sm text-neutral-500">{session.user.name}</span>
+        <div className="flex items-center gap-2 sm:gap-4">
+          <span className="hidden text-sm text-neutral-500 sm:inline dark:text-neutral-400">
+            {session.user.name}
+          </span>
+          <ThemeToggle />
           <SignOutButton />
         </div>
       </header>

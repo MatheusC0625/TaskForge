@@ -44,7 +44,7 @@ export const ProjectFormDialog = forwardRef<ModalHandle, ProjectFormDialogProps>
       <Modal ref={modalRef} title={title}>
         <form action={handleSubmit} className="flex flex-col gap-4">
           <div className="flex flex-col gap-1.5">
-            <label htmlFor={nameId} className="text-sm font-medium text-neutral-700">
+            <label htmlFor={nameId} className="text-sm font-medium text-neutral-700 dark:text-neutral-300">
               Nome
             </label>
             <input
@@ -54,12 +54,12 @@ export const ProjectFormDialog = forwardRef<ModalHandle, ProjectFormDialogProps>
               required
               maxLength={80}
               defaultValue={defaultValues?.name}
-              className="rounded-lg border border-neutral-300 px-3 py-2 text-sm outline-none focus:border-neutral-900 focus:ring-1 focus:ring-neutral-900"
+              className="rounded-lg border border-neutral-300 px-3 py-2 text-sm outline-none focus:border-neutral-900 focus:ring-1 focus:ring-neutral-900 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-100 dark:focus:border-neutral-400 dark:focus:ring-neutral-400"
             />
           </div>
 
           <div className="flex flex-col gap-1.5">
-            <label htmlFor={descriptionId} className="text-sm font-medium text-neutral-700">
+            <label htmlFor={descriptionId} className="text-sm font-medium text-neutral-700 dark:text-neutral-300">
               Descrição (opcional)
             </label>
             <textarea
@@ -68,24 +68,24 @@ export const ProjectFormDialog = forwardRef<ModalHandle, ProjectFormDialogProps>
               rows={3}
               maxLength={500}
               defaultValue={defaultValues?.description}
-              className="resize-none rounded-lg border border-neutral-300 px-3 py-2 text-sm outline-none focus:border-neutral-900 focus:ring-1 focus:ring-neutral-900"
+              className="resize-none rounded-lg border border-neutral-300 px-3 py-2 text-sm outline-none focus:border-neutral-900 focus:ring-1 focus:ring-neutral-900 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-100 dark:focus:border-neutral-400 dark:focus:ring-neutral-400"
             />
           </div>
 
-          {error && <p className="text-sm text-red-600">{error}</p>}
+          {error && <p className="text-sm text-red-600 dark:text-red-400">{error}</p>}
 
           <div className="flex justify-end gap-3">
             <button
               type="button"
               onClick={() => modalRef.current?.close()}
-              className="rounded-lg border border-neutral-300 px-4 py-2 text-sm font-medium text-neutral-700 transition hover:bg-neutral-100"
+              className="rounded-lg border border-neutral-300 px-4 py-2 text-sm font-medium text-neutral-700 transition hover:bg-neutral-100 active:scale-[0.98] dark:border-neutral-700 dark:text-neutral-300 dark:hover:bg-neutral-800"
             >
               Cancelar
             </button>
             <button
               type="submit"
               disabled={isPending}
-              className="rounded-lg bg-neutral-900 px-4 py-2 text-sm font-medium text-white transition hover:bg-neutral-800 disabled:opacity-60"
+              className="rounded-lg bg-neutral-900 px-4 py-2 text-sm font-medium text-white transition hover:bg-neutral-800 active:scale-[0.98] disabled:opacity-60 dark:bg-neutral-100 dark:text-neutral-900 dark:hover:bg-neutral-200"
             >
               {isPending ? pendingLabel : submitLabel}
             </button>

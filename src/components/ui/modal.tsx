@@ -29,10 +29,12 @@ export const Modal = forwardRef<ModalHandle, ModalProps>(function Modal(
       onClick={(event) => {
         if (event.target === dialogRef.current) dialogRef.current?.close();
       }}
-      className="w-full max-w-md rounded-xl border border-neutral-200 bg-white p-0 shadow-xl backdrop:bg-black/40"
+      className="w-[calc(100%-2rem)] max-w-md rounded-xl border border-neutral-200 bg-white p-0 shadow-xl backdrop:bg-black/40 dark:border-neutral-800 dark:bg-neutral-900"
     >
       <div className="p-6">
-        <h2 className="mb-4 text-lg font-semibold text-neutral-900">{title}</h2>
+        <h2 className="mb-4 text-lg font-semibold text-neutral-900 dark:text-neutral-100">
+          {title}
+        </h2>
         {children}
       </div>
     </dialog>
