@@ -2,7 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
-import { Board } from "./board";
+import { ProjectView } from "./project-view";
 
 export default async function ProjectPage({
   params,
@@ -78,7 +78,7 @@ export default async function ProjectPage({
         )}
       </div>
 
-      <Board projectId={project.id} columns={columns} projectTags={project.tags} />
+      <ProjectView projectId={project.id} columns={columns} projectTags={project.tags} />
     </div>
   );
 }
