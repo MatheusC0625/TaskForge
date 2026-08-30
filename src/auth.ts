@@ -1,5 +1,7 @@
 import NextAuth, { CredentialsSignin } from "next-auth";
 import Credentials from "next-auth/providers/credentials";
+import GitHub from "next-auth/providers/github";
+import Google from "next-auth/providers/google";
 import bcrypt from "bcryptjs";
 
 import { prisma } from "@/lib/prisma";
@@ -8,6 +10,7 @@ import { authConfig } from "@/auth.config";
 
 const MAX_LOGIN_ATTEMPTS = 5;
 const LOCK_DURATION_MS = 15 * 60 * 1000;
+const OAUTH_PROVIDERS = new Set(["github", "google"]);
 
 export class AccountLockedError extends CredentialsSignin {
   code = "account_locked";
@@ -64,12 +67,30 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         return { id: user.id, name: user.name, email: user.email };
       },
     }),
+    ...(process.env.AUTH_GITHUB_ID && process.env.AUTH_GITHUB_SECRET ? [GitHub] : []),
+    ...(process.env.AUTH_GOOGLE_ID && process.env.AUTH_GOOGLE_SECRET ? [Google] : []),
   ],
   callbacks: {
     ...authConfig.callbacks,
-    jwt: async ({ token, user }) => {
+    signIn: async ({ user, account }) => {
+      if (account && OAUTH_PROVIDERS.has(account.provider)) {
+        if (!user.email) return false;
+        await prisma.user.upsert({
+          where: { email: user.email },
+          update: { name: user.name ?? user.email },
+          create: { email: user.email, name: user.name ?? user.email },
+        });
+      }
+      return true;
+    },
+    jwt: async ({ token, user, account }) => {
       if (user) {
-        token.id = user.id;
+        if (account && OAUTH_PROVIDERS.has(account.provider) && user.email) {
+          const dbUser = await prisma.user.findUnique({ where: { email: user.email } });
+          if (dbUser) token.id = dbUser.id;
+        } else if (user.id) {
+          token.id = user.id;
+        }
       }
       return token;
     },

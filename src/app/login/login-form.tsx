@@ -5,8 +5,13 @@ import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { signIn } from "next-auth/react";
 import { PasswordInput } from "@/components/ui/password-input";
+import { OAuthButtons } from "@/components/oauth-buttons";
 
-export function LoginForm() {
+export function LoginForm({
+  oauthProviders,
+}: {
+  oauthProviders: { github: boolean; google: boolean };
+}) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const callbackUrl = searchParams.get("callbackUrl") ?? "/dashboard";
@@ -44,6 +49,12 @@ export function LoginForm() {
 
   return (
     <form onSubmit={handleSubmit} className="flex w-full max-w-sm flex-col gap-4">
+      <OAuthButtons
+        github={oauthProviders.github}
+        google={oauthProviders.google}
+        callbackUrl={callbackUrl}
+      />
+
       <div className="flex flex-col gap-1.5">
         <label htmlFor="email" className="text-sm font-medium text-neutral-700 dark:text-neutral-300">
           E-mail
