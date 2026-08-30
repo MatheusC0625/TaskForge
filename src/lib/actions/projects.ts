@@ -21,6 +21,8 @@ export async function createProject(
   const parsed = projectSchema.safeParse({
     name: formData.get("name"),
     description: formData.get("description"),
+    color: formData.get("color"),
+    githubRepoUrl: formData.get("githubRepoUrl"),
   });
 
   if (!parsed.success) {
@@ -31,6 +33,8 @@ export async function createProject(
     data: {
       name: parsed.data.name,
       description: parsed.data.description || null,
+      color: parsed.data.color || "#10b981",
+      githubRepoUrl: parsed.data.githubRepoUrl || null,
       ownerId: session.user.id,
       columns: {
         create: DEFAULT_COLUMNS.map((name, order) => ({ name, order })),
@@ -61,6 +65,8 @@ export async function updateProject(
   const parsed = projectSchema.safeParse({
     name: formData.get("name"),
     description: formData.get("description"),
+    color: formData.get("color"),
+    githubRepoUrl: formData.get("githubRepoUrl"),
   });
   if (!parsed.success) {
     return { error: parsed.error.issues[0]?.message ?? "Dados inválidos." };
@@ -71,6 +77,8 @@ export async function updateProject(
     data: {
       name: parsed.data.name,
       description: parsed.data.description || null,
+      color: parsed.data.color || "#10b981",
+      githubRepoUrl: parsed.data.githubRepoUrl || null,
     },
   });
 
