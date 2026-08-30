@@ -4,8 +4,14 @@ import { useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { signIn } from "next-auth/react";
+import { PasswordInput } from "@/components/ui/password-input";
+import { OAuthButtons } from "@/components/oauth-buttons";
 
-export function LoginForm() {
+export function LoginForm({
+  oauthProviders,
+}: {
+  oauthProviders: { github: boolean; google: boolean };
+}) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const callbackUrl = searchParams.get("callbackUrl") ?? "/dashboard";
@@ -29,7 +35,11 @@ export function LoginForm() {
     setIsSubmitting(false);
 
     if (result?.error) {
-      setError("E-mail ou senha incorretos.");
+      if (result.code === "account_locked") {
+        setError("Muitas tentativas incorretas. Tente novamente em 15 minutos.");
+      } else {
+        setError("E-mail ou senha incorretos.");
+      }
       return;
     }
 
@@ -39,6 +49,12 @@ export function LoginForm() {
 
   return (
     <form onSubmit={handleSubmit} className="flex w-full max-w-sm flex-col gap-4">
+      <OAuthButtons
+        github={oauthProviders.github}
+        google={oauthProviders.google}
+        callbackUrl={callbackUrl}
+      />
+
       <div className="flex flex-col gap-1.5">
         <label htmlFor="email" className="text-sm font-medium text-neutral-700 dark:text-neutral-300">
           E-mail
@@ -56,13 +72,20 @@ export function LoginForm() {
       </div>
 
       <div className="flex flex-col gap-1.5">
-        <label htmlFor="password" className="text-sm font-medium text-neutral-700 dark:text-neutral-300">
-          Senha
-        </label>
-        <input
+        <div className="flex items-center justify-between">
+          <label htmlFor="password" className="text-sm font-medium text-neutral-700 dark:text-neutral-300">
+            Senha
+          </label>
+          <Link
+            href="/forgot-password"
+            className="text-xs font-medium text-neutral-500 hover:underline dark:text-neutral-400"
+          >
+            Esqueci minha senha
+          </Link>
+        </div>
+        <PasswordInput
           id="password"
           name="password"
-          type="password"
           autoComplete="current-password"
           required
           value={password}

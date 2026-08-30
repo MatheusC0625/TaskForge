@@ -1,8 +1,11 @@
 import { Suspense } from "react";
 import { LoginForm } from "./login-form";
 import { ThemeToggle } from "@/components/theme-toggle";
+import { getEnabledOAuthProviders } from "@/lib/oauth";
 
 export default function LoginPage() {
+  const oauthProviders = getEnabledOAuthProviders();
+
   return (
     <main className="relative flex min-h-screen flex-1 flex-col items-center justify-center gap-8 px-4">
       <div className="absolute top-4 right-4">
@@ -17,7 +20,7 @@ export default function LoginPage() {
         </p>
       </div>
       <Suspense>
-        <LoginForm />
+        <LoginForm oauthProviders={oauthProviders} />
       </Suspense>
     </main>
   );

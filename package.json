@@ -22,6 +22,7 @@
     "next-themes": "^0.4.6",
     "react": "19.2.8",
     "react-dom": "19.2.8",
+    "resend": "^6.25.0",
     "zod": "^4.4.3"
   },
   "devDependencies": {
