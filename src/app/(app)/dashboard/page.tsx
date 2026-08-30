@@ -85,7 +85,7 @@ export default async function DashboardPage() {
           </p>
           <Link
             href="/projects"
-            className="mt-2 rounded-lg bg-neutral-900 px-4 py-2 text-sm font-medium text-white transition hover:bg-neutral-800 active:scale-[0.98] dark:bg-neutral-100 dark:text-neutral-900 dark:hover:bg-neutral-200"
+            className="mt-2 rounded-lg bg-emerald-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-emerald-700 active:scale-[0.98] dark:bg-emerald-500 dark:hover:bg-emerald-600"
           >
             Ir para Projetos
           </Link>
@@ -159,7 +159,7 @@ export default async function DashboardPage() {
                     </div>
                     <div className="h-2 flex-1 rounded-full bg-neutral-100 dark:bg-neutral-800">
                       <div
-                        className="h-2 rounded-full bg-neutral-900 dark:bg-neutral-100"
+                        className="h-2 rounded-full bg-emerald-600 dark:bg-emerald-500"
                         style={{
                           width: `${pendingTasks.length === 0 ? 0 : (count / pendingTasks.length) * 100}%`,
                         }}

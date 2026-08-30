@@ -1,5 +1,6 @@
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
+import { GithubRepoBadge } from "@/components/github-repo-badge";
 import { NewProjectButton } from "./new-project-button";
 import { ProjectCard } from "./project-card";
 
@@ -13,6 +14,8 @@ export default async function ProjectsPage() {
       id: true,
       name: true,
       description: true,
+      color: true,
+      githubRepoUrl: true,
       _count: { select: { columns: true, tasks: true } },
     },
   });
@@ -48,9 +51,14 @@ export default async function ProjectsPage() {
                 id: project.id,
                 name: project.name,
                 description: project.description,
+                color: project.color,
+                githubRepoUrl: project.githubRepoUrl,
                 columnCount: project._count.columns,
                 taskCount: project._count.tasks,
               }}
+              githubBadge={
+                project.githubRepoUrl ? <GithubRepoBadge repoUrl={project.githubRepoUrl} /> : undefined
+              }
             />
           ))}
         </div>

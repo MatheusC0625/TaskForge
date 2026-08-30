@@ -1,7 +1,8 @@
-import Link from "next/link";
 import { notFound } from "next/navigation";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
+import { GithubRepoBadge } from "@/components/github-repo-badge";
+import { ProjectHeader } from "./project-header";
 import { ProjectView } from "./project-view";
 
 export default async function ProjectPage({
@@ -18,6 +19,8 @@ export default async function ProjectPage({
       id: true,
       name: true,
       description: true,
+      color: true,
+      githubRepoUrl: true,
       ownerId: true,
       tags: {
         orderBy: { name: "asc" },
@@ -68,22 +71,18 @@ export default async function ProjectPage({
 
   return (
     <div className="mx-auto flex w-full max-w-6xl flex-1 flex-col gap-6 px-4 py-8 sm:px-6 sm:py-10">
-      <div>
-        <Link
-          href="/projects"
-          className="text-sm text-neutral-500 hover:underline dark:text-neutral-400"
-        >
-          ← Projetos
-        </Link>
-        <h1 className="mt-1 text-xl font-semibold text-neutral-900 dark:text-neutral-100">
-          {project.name}
-        </h1>
-        {project.description && (
-          <p className="mt-1 text-sm text-neutral-500 dark:text-neutral-400">
-            {project.description}
-          </p>
-        )}
-      </div>
+      <ProjectHeader
+        project={{
+          id: project.id,
+          name: project.name,
+          description: project.description,
+          color: project.color,
+          githubRepoUrl: project.githubRepoUrl,
+        }}
+        githubBadge={
+          project.githubRepoUrl ? <GithubRepoBadge repoUrl={project.githubRepoUrl} /> : undefined
+        }
+      />
 
       <ProjectView projectId={project.id} columns={columns} projectTags={project.tags} />
     </div>

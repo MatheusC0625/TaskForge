@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useTransition } from "react";
+import { useRef, useTransition, type ReactNode } from "react";
 import Link from "next/link";
 import type { ModalHandle } from "@/components/ui/modal";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
@@ -12,12 +12,15 @@ type ProjectCardProps = {
     id: string;
     name: string;
     description: string | null;
+    color: string;
+    githubRepoUrl: string | null;
     columnCount: number;
     taskCount: number;
   };
+  githubBadge?: ReactNode;
 };
 
-export function ProjectCard({ project }: ProjectCardProps) {
+export function ProjectCard({ project, githubBadge }: ProjectCardProps) {
   const editRef = useRef<ModalHandle>(null);
   const deleteRef = useRef<ModalHandle>(null);
   const [isDeleting, startDeleteTransition] = useTransition();
@@ -25,7 +28,10 @@ export function ProjectCard({ project }: ProjectCardProps) {
   const boundUpdate = updateProject.bind(null, project.id);
 
   return (
-    <div className="flex flex-col justify-between gap-3 rounded-xl border border-neutral-200 p-5 transition hover:border-neutral-300 hover:shadow-sm dark:border-neutral-800 dark:hover:border-neutral-700">
+    <div
+      className="flex flex-col justify-between gap-3 rounded-xl border border-neutral-200 border-t-4 p-5 transition hover:border-neutral-300 hover:shadow-sm dark:border-neutral-800 dark:hover:border-neutral-700"
+      style={{ borderTopColor: project.color }}
+    >
       <div>
         <Link href={`/projects/${project.id}`} className="block">
           <h3 className="font-semibold text-neutral-900 hover:underline dark:text-neutral-100">
@@ -37,6 +43,7 @@ export function ProjectCard({ project }: ProjectCardProps) {
             {project.description}
           </p>
         )}
+        {githubBadge && <div className="mt-2">{githubBadge}</div>}
       </div>
 
       <div className="flex items-center justify-between">
@@ -67,7 +74,12 @@ export function ProjectCard({ project }: ProjectCardProps) {
         submitLabel="Salvar"
         pendingLabel="Salvando..."
         action={boundUpdate}
-        defaultValues={{ name: project.name, description: project.description ?? "" }}
+        defaultValues={{
+          name: project.name,
+          description: project.description ?? "",
+          color: project.color,
+          githubRepoUrl: project.githubRepoUrl ?? "",
+        }}
       />
 
       <ConfirmDialog
