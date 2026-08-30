@@ -11,7 +11,7 @@ export type GithubRepoInfo = {
 export function parseGithubRepoUrl(url: string) {
   const match = url.match(GITHUB_REPO_URL_REGEX);
   if (!match) return null;
-  return { owner: match[1], repo: match[2] };
+  return { owner: match[1], repo: match[2].replace(/\.git$/, "") };
 }
 
 export async function getGithubRepoInfo(url: string): Promise<GithubRepoInfo | null> {
