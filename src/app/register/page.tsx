@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { signIn } from "next-auth/react";
 import { ThemeToggle } from "@/components/theme-toggle";
+import { PasswordInput } from "@/components/ui/password-input";
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -12,12 +13,19 @@ export default function RegisterPage() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
     setError(null);
+
+    if (password !== confirmPassword) {
+      setError("As senhas não coincidem.");
+      return;
+    }
+
     setIsSubmitting(true);
 
     const response = await fetch("/api/register", {
@@ -101,10 +109,9 @@ export default function RegisterPage() {
           <label htmlFor="password" className="text-sm font-medium text-neutral-700 dark:text-neutral-300">
             Senha
           </label>
-          <input
+          <PasswordInput
             id="password"
             name="password"
-            type="password"
             autoComplete="new-password"
             required
             minLength={8}
@@ -113,6 +120,25 @@ export default function RegisterPage() {
             className="rounded-lg border border-neutral-300 px-3 py-2 text-sm outline-none focus:border-neutral-900 focus:ring-1 focus:ring-neutral-900 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-100 dark:focus:border-neutral-400 dark:focus:ring-neutral-400"
           />
           <p className="text-xs text-neutral-400 dark:text-neutral-500">Mínimo de 8 caracteres.</p>
+        </div>
+
+        <div className="flex flex-col gap-1.5">
+          <label
+            htmlFor="confirmPassword"
+            className="text-sm font-medium text-neutral-700 dark:text-neutral-300"
+          >
+            Confirmar senha
+          </label>
+          <PasswordInput
+            id="confirmPassword"
+            name="confirmPassword"
+            autoComplete="new-password"
+            required
+            minLength={8}
+            value={confirmPassword}
+            onChange={(event) => setConfirmPassword(event.target.value)}
+            className="rounded-lg border border-neutral-300 px-3 py-2 text-sm outline-none focus:border-neutral-900 focus:ring-1 focus:ring-neutral-900 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-100 dark:focus:border-neutral-400 dark:focus:ring-neutral-400"
+          />
         </div>
 
         {error && <p className="text-sm text-red-600 dark:text-red-400">{error}</p>}
