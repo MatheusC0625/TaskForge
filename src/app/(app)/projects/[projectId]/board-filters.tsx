@@ -38,13 +38,13 @@ export function BoardFilters({
             value={search}
             onChange={(event) => onSearchChange(event.target.value)}
             placeholder="Buscar tarefas..."
-            className="w-full rounded-lg border border-neutral-300 px-3 py-1.5 text-sm outline-none focus:border-neutral-900 sm:w-56 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-100 dark:focus:border-neutral-400"
+            className="w-full rounded-lg border border-neutral-300 px-3 py-1.5 text-sm outline-none focus:border-emerald-600 sm:w-56 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-100 dark:focus:border-emerald-500"
           />
 
           <select
             value={priority}
             onChange={(event) => onPriorityChange(event.target.value as Priority | "ALL")}
-            className="rounded-lg border border-neutral-300 px-3 py-1.5 text-sm outline-none focus:border-neutral-900 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-100 dark:focus:border-neutral-400"
+            className="rounded-lg border border-neutral-300 px-3 py-1.5 text-sm outline-none focus:border-emerald-600 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-100 dark:focus:border-emerald-500"
           >
             <option value="ALL">Todas as prioridades</option>
             {PRIORITY_ORDER.map((option) => (
@@ -96,7 +96,7 @@ export function BoardFilters({
             onClick={() => onViewModeChange("kanban")}
             className={`rounded-md px-3 py-1 font-medium transition ${
               viewMode === "kanban"
-                ? "bg-neutral-900 text-white dark:bg-neutral-100 dark:text-neutral-900"
+                ? "bg-emerald-600 text-white dark:bg-emerald-500"
                 : "text-neutral-600 dark:text-neutral-400"
             }`}
           >
@@ -107,7 +107,7 @@ export function BoardFilters({
             onClick={() => onViewModeChange("lista")}
             className={`rounded-md px-3 py-1 font-medium transition ${
               viewMode === "lista"
-                ? "bg-neutral-900 text-white dark:bg-neutral-100 dark:text-neutral-900"
+                ? "bg-emerald-600 text-white dark:bg-emerald-500"
                 : "text-neutral-600 dark:text-neutral-400"
             }`}
           >

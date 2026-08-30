@@ -101,7 +101,7 @@ export function TaskPanel({
                 onChange={(event) =>
                   updateTask(task.id, { priority: event.target.value as Priority })
                 }
-                className="rounded-lg border border-neutral-300 px-3 py-2 text-sm outline-none focus:border-neutral-900 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-100 dark:focus:border-neutral-400"
+                className="rounded-lg border border-neutral-300 px-3 py-2 text-sm outline-none focus:border-emerald-600 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-100 dark:focus:border-emerald-500"
               >
                 {PRIORITY_ORDER.map((priority) => (
                   <option key={priority} value={priority}>
@@ -119,7 +119,7 @@ export function TaskPanel({
                 type="date"
                 defaultValue={toDateInputValue(task.dueDate)}
                 onChange={(event) => updateTask(task.id, { dueDate: event.target.value || null })}
-                className="rounded-lg border border-neutral-300 px-3 py-2 text-sm outline-none focus:border-neutral-900 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-100 dark:[color-scheme:dark] dark:focus:border-neutral-400"
+                className="rounded-lg border border-neutral-300 px-3 py-2 text-sm outline-none focus:border-emerald-600 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-100 dark:[color-scheme:dark] dark:focus:border-emerald-500"
               />
             </div>
           </div>
@@ -138,7 +138,7 @@ export function TaskPanel({
               }}
               rows={4}
               placeholder="Adicione mais detalhes..."
-              className="resize-none rounded-lg border border-neutral-300 px-3 py-2 text-sm outline-none focus:border-neutral-900 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-100 dark:focus:border-neutral-400"
+              className="resize-none rounded-lg border border-neutral-300 px-3 py-2 text-sm outline-none focus:border-emerald-600 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-100 dark:focus:border-emerald-500"
             />
           </div>
 
@@ -254,12 +254,12 @@ function TagSection({
               placeholder="Nome da etiqueta"
               required
               maxLength={30}
-              className="flex-1 rounded-lg border border-neutral-300 px-3 py-1.5 text-sm outline-none focus:border-neutral-900 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-100 dark:focus:border-neutral-400"
+              className="flex-1 rounded-lg border border-neutral-300 px-3 py-1.5 text-sm outline-none focus:border-emerald-600 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-100 dark:focus:border-emerald-500"
             />
             <button
               type="submit"
               disabled={isPending}
-              className="rounded-lg bg-neutral-900 px-3 py-1.5 text-xs font-medium text-white disabled:opacity-60 dark:bg-neutral-100 dark:text-neutral-900"
+              className="rounded-lg bg-emerald-600 px-3 py-1.5 text-xs font-medium text-white disabled:opacity-60 dark:bg-emerald-500"
             >
               Criar
             </button>
@@ -341,7 +341,7 @@ function ChecklistSection({
       {totalCount > 0 && (
         <div className="h-1.5 w-full rounded-full bg-neutral-100 dark:bg-neutral-800">
           <div
-            className="h-1.5 rounded-full bg-neutral-900 transition-all dark:bg-neutral-100"
+            className="h-1.5 rounded-full bg-emerald-600 transition-all dark:bg-emerald-500"
             style={{ width: `${progress}%` }}
           />
         </div>
@@ -381,7 +381,7 @@ function ChecklistSection({
           name="title"
           placeholder="Adicionar item..."
           maxLength={200}
-          className="flex-1 rounded-lg border border-neutral-300 px-3 py-1.5 text-sm outline-none focus:border-neutral-900 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-100 dark:focus:border-neutral-400"
+          className="flex-1 rounded-lg border border-neutral-300 px-3 py-1.5 text-sm outline-none focus:border-emerald-600 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-100 dark:focus:border-emerald-500"
         />
         <button
           type="submit"

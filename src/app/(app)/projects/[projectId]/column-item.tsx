@@ -41,12 +41,12 @@ export function ColumnItem({ column, taskCount, isFirst, isLast }: ColumnItemPro
             defaultValue={column.name}
             autoFocus
             maxLength={40}
-            className="flex-1 rounded-md border border-neutral-300 px-2 py-1 text-sm outline-none focus:border-neutral-900 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-100 dark:focus:border-neutral-400"
+            className="flex-1 rounded-md border border-neutral-300 px-2 py-1 text-sm outline-none focus:border-emerald-600 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-100 dark:focus:border-emerald-500"
           />
           <button
             type="submit"
             disabled={isRenaming}
-            className="rounded-md bg-neutral-900 px-2 py-1 text-xs font-medium text-white disabled:opacity-60 dark:bg-neutral-100 dark:text-neutral-900"
+            className="rounded-md bg-emerald-600 px-2 py-1 text-xs font-medium text-white disabled:opacity-60 dark:bg-emerald-500"
           >
             Salvar
           </button>
