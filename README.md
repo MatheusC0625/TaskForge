@@ -6,9 +6,12 @@ Gerenciador de tarefas estilo Kanban — full stack, com autenticação, banco d
 
 ## Funcionalidades
 
-- **Contas de usuário** — cadastro e login com e-mail/senha
-- **Projetos/boards** — criar, editar, excluir
-- **Colunas personalizáveis** — criar, renomear, excluir, reordenar
+- **Contas de usuário** — cadastro e login com e-mail/senha, ou com GitHub/Google (OAuth)
+- **Segurança de conta** — senha com hash (bcrypt), bloqueio após tentativas de login incorretas, redefinição de senha por e-mail
+- **Projetos/boards** — criar (a partir de um template ou do zero), editar, excluir
+- **Templates de projeto** — galeria com preview visual (Scrum, Kanban de Bugs, Pentest, Preparação para Certificação, e modelos exclusivos Pro)
+- **Cor e repositório do GitHub por projeto** — vincule um ou mais repositórios (múltiplos no plano Pro) com selo de linguagem, estrelas e status do último CI/CD
+- **Colunas personalizáveis** — criar, renomear direto no cabeçalho, excluir, reordenar por drag & drop
 - **Kanban com drag & drop** — mover tarefas entre colunas e reordenar dentro delas
 - **Tarefas completas** — título, descrição, prioridade, prazo e etiquetas coloridas
 - **Checklist/subtarefas** com indicador de progresso
@@ -16,6 +19,7 @@ Gerenciador de tarefas estilo Kanban — full stack, com autenticação, banco d
 - **Busca e filtros** — por título, prioridade e etiquetas
 - **Duas visualizações** — Kanban e Lista
 - **Dashboard** com resumo das tarefas (concluídas, atrasadas, próximos prazos, distribuição por prioridade)
+- **Plano Free/Pro** — assinatura simulada (fins de demonstração) com página de comparação de planos
 - **Dark mode / Light mode**
 - **Totalmente responsivo** — desktop e celular
 - **Estados de loading, erro e vazio** em todas as telas principais
@@ -35,13 +39,16 @@ Gerenciador de tarefas estilo Kanban — full stack, com autenticação, banco d
 
 ## Stack
 
-- [Next.js](https://nextjs.org) (App Router) + TypeScript
-- [Tailwind CSS](https://tailwindcss.com)
-- [PostgreSQL](https://www.postgresql.org) + [Prisma](https://www.prisma.io) (com driver adapter `@prisma/adapter-pg`)
-- [Auth.js / NextAuth v5](https://authjs.dev) — Credentials Provider, sessão via JWT
-- [dnd-kit](https://dndkit.com) — drag & drop do Kanban
+- [Next.js](https://nextjs.org) (App Router, Server Actions) + TypeScript
+- [Tailwind CSS](https://tailwindcss.com) v4
+- [PostgreSQL](https://www.postgresql.org) ([Neon](https://neon.tech) em produção) + [Prisma](https://www.prisma.io) (com driver adapter `@prisma/adapter-pg`)
+- [Auth.js / NextAuth v5](https://authjs.dev) — Credentials Provider (JWT) + OAuth (GitHub e Google)
+- [dnd-kit](https://dndkit.com) — drag & drop de tarefas e colunas
 - [next-themes](https://github.com/pacocoursey/next-themes) — dark mode
-- [Zod](https://zod.dev) — validação de formulários
+- [Zod](https://zod.dev) — validação de formulários e Server Actions
+- [Resend](https://resend.com) — e-mail transacional (redefinição de senha)
+- API REST do GitHub — metadados de repositório e status de CI/CD (GitHub Actions)
+- [Vercel](https://vercel.com) — deploy e CI/CD do próprio projeto
 
 ## Algumas decisões técnicas
 
@@ -109,6 +116,14 @@ prisma/
 ├─ schema.prisma
 └─ migrations/
 ```
+
+## Roadmap
+
+Ideias que ficaram de fora do escopo atual (projeto de portfólio, sem usuários reais no momento):
+
+- **Sugestões de código via IA** — usar a API da Claude (Anthropic) para analisar uma tarefa vinculada a um repositório e sugerir uma abordagem ou trecho de código, exibido como comentário na tarefa (sem escrita automática no repositório).
+- **Integração mais profunda com GitHub** — um GitHub App com permissão de escrita permitiria ir além da sugestão: abrir uma branch e um Pull Request automaticamente a partir de uma tarefa.
+- **Gateway de pagamento real** (Stripe) — o plano Pro hoje é simulado; uma versão futura poderia processar assinaturas de verdade em modo sandbox.
 
 ## Sobre este projeto
 
