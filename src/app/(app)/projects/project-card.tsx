@@ -1,11 +1,8 @@
 "use client";
 
-import { useRef, useTransition, type ReactNode } from "react";
+import { useState, type ReactNode } from "react";
 import Link from "next/link";
-import type { ModalHandle } from "@/components/ui/modal";
-import { ConfirmDialog } from "@/components/ui/confirm-dialog";
-import { ProjectFormDialog } from "./project-form-dialog";
-import { deleteProject, updateProject } from "@/lib/actions/projects";
+import { ProjectSettingsPanel } from "./project-settings-panel";
 
 type ProjectCardProps = {
   project: {
@@ -21,11 +18,7 @@ type ProjectCardProps = {
 };
 
 export function ProjectCard({ project, githubBadge }: ProjectCardProps) {
-  const editRef = useRef<ModalHandle>(null);
-  const deleteRef = useRef<ModalHandle>(null);
-  const [isDeleting, startDeleteTransition] = useTransition();
-
-  const boundUpdate = updateProject.bind(null, project.id);
+  const [isPanelOpen, setIsPanelOpen] = useState(false);
 
   return (
     <div
@@ -50,46 +43,18 @@ export function ProjectCard({ project, githubBadge }: ProjectCardProps) {
         <span className="text-xs text-neutral-400 dark:text-neutral-500">
           {project.columnCount} colunas · {project.taskCount} tarefas
         </span>
-        <div className="flex gap-1">
-          <button
-            type="button"
-            onClick={() => editRef.current?.open()}
-            className="rounded-md px-2 py-1 text-xs font-medium text-neutral-600 hover:bg-neutral-100 dark:text-neutral-400 dark:hover:bg-neutral-800"
-          >
-            Editar
-          </button>
-          <button
-            type="button"
-            onClick={() => deleteRef.current?.open()}
-            className="rounded-md px-2 py-1 text-xs font-medium text-red-600 hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-950/40"
-          >
-            Excluir
-          </button>
-        </div>
+        <button
+          type="button"
+          onClick={() => setIsPanelOpen(true)}
+          className="rounded-md px-2 py-1 text-xs font-medium text-neutral-600 hover:bg-neutral-100 dark:text-neutral-400 dark:hover:bg-neutral-800"
+        >
+          Editar
+        </button>
       </div>
 
-      <ProjectFormDialog
-        ref={editRef}
-        title="Editar projeto"
-        submitLabel="Salvar"
-        pendingLabel="Salvando..."
-        action={boundUpdate}
-        defaultValues={{
-          name: project.name,
-          description: project.description ?? "",
-          color: project.color,
-          githubRepoUrl: project.githubRepoUrl ?? "",
-        }}
-      />
-
-      <ConfirmDialog
-        ref={deleteRef}
-        title={`Excluir "${project.name}"?`}
-        description="Essa ação remove o projeto e todas as colunas e tarefas dentro dele. Não pode ser desfeita."
-        confirmLabel={isDeleting ? "Excluindo..." : "Excluir"}
-        isPending={isDeleting}
-        onConfirm={() => startDeleteTransition(async () => { await deleteProject(project.id); })}
-      />
+      {isPanelOpen && (
+        <ProjectSettingsPanel project={project} onClose={() => setIsPanelOpen(false)} />
+      )}
     </div>
   );
 }
