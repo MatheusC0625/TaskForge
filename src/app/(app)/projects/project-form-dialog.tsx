@@ -70,54 +70,7 @@ export const ProjectFormDialog = forwardRef<ModalHandle, ProjectFormDialogProps>
     return (
       <Modal ref={modalRef} title={title}>
         <form action={handleSubmit} className="flex flex-col gap-4">
-          <div className="flex flex-col gap-1.5">
-            <span className="text-sm font-medium text-neutral-700 dark:text-neutral-300">Modelo</span>
-            <div className="flex flex-col gap-1.5">
-              {PROJECT_TEMPLATES.map((template) => {
-                const locked = !!template.pro && !isPro;
-                return (
-                  <button
-                    key={template.id}
-                    type="button"
-                    disabled={locked}
-                    onClick={() => setTemplateId(template.id)}
-                    aria-pressed={templateId === template.id}
-                    className={`flex items-start justify-between gap-2 rounded-lg border px-3 py-2 text-left transition ${
-                      locked
-                        ? "cursor-not-allowed border-neutral-200 opacity-60 dark:border-neutral-800"
-                        : templateId === template.id
-                          ? "border-emerald-600 bg-emerald-50 dark:border-emerald-500 dark:bg-emerald-950/30"
-                          : "border-neutral-200 hover:border-neutral-300 dark:border-neutral-700 dark:hover:border-neutral-600"
-                    }`}
-                  >
-                    <span>
-                      <span className="block text-sm font-medium text-neutral-900 dark:text-neutral-100">
-                        {template.name}
-                      </span>
-                      <span className="block text-xs text-neutral-500 dark:text-neutral-400">
-                        {template.description}
-                      </span>
-                    </span>
-                    {template.pro && (
-                      <span className="shrink-0 rounded-full bg-emerald-600 px-2 py-0.5 text-[11px] font-medium text-white dark:bg-emerald-500">
-                        Pro
-                      </span>
-                    )}
-                  </button>
-                );
-              })}
-            </div>
-            {PROJECT_TEMPLATES.some((template) => template.pro) && !isPro && (
-              <p className="text-xs text-neutral-400 dark:text-neutral-500">
-                Templates com o selo Pro exigem{" "}
-                <a href="/upgrade" className="underline hover:text-neutral-600 dark:hover:text-neutral-300">
-                  assinatura Pro
-                </a>
-                .
-              </p>
-            )}
-            <input type="hidden" name="templateId" value={templateId} />
-          </div>
+          <input type="hidden" name="templateId" value={templateId} />
 
           <div className="flex flex-col gap-1.5">
             <label htmlFor={nameId} className="text-sm font-medium text-neutral-700 dark:text-neutral-300">
