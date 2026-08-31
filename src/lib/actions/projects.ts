@@ -73,7 +73,11 @@ export async function createProject(
       githubRepoUrl: parsed.data.githubRepoUrl || null,
       ownerId: session.user.id,
       ...(template && template.columns.length > 0
-        ? { columns: { create: template.columns.map((name, order) => ({ name, order })) } }
+        ? {
+            columns: {
+              create: template.columns.map((column, order) => ({ name: column.name, order })),
+            },
+          }
         : {}),
     },
   });
