@@ -10,14 +10,15 @@ type ProjectCardProps = {
     name: string;
     description: string | null;
     color: string;
-    githubRepoUrl: string | null;
+    repos: { id: string; url: string }[];
     columnCount: number;
     taskCount: number;
   };
-  githubBadge?: ReactNode;
+  githubBadges?: ReactNode[];
+  isPro?: boolean;
 };
 
-export function ProjectCard({ project, githubBadge }: ProjectCardProps) {
+export function ProjectCard({ project, githubBadges, isPro = false }: ProjectCardProps) {
   const [isPanelOpen, setIsPanelOpen] = useState(false);
 
   return (
@@ -36,7 +37,9 @@ export function ProjectCard({ project, githubBadge }: ProjectCardProps) {
             {project.description}
           </p>
         )}
-        {githubBadge && <div className="mt-2">{githubBadge}</div>}
+        {githubBadges && githubBadges.length > 0 && (
+          <div className="mt-2 flex flex-wrap gap-1.5">{githubBadges}</div>
+        )}
       </div>
 
       <div className="flex items-center justify-between">
@@ -53,7 +56,7 @@ export function ProjectCard({ project, githubBadge }: ProjectCardProps) {
       </div>
 
       {isPanelOpen && (
-        <ProjectSettingsPanel project={project} onClose={() => setIsPanelOpen(false)} />
+        <ProjectSettingsPanel project={project} isPro={isPro} onClose={() => setIsPanelOpen(false)} />
       )}
     </div>
   );
