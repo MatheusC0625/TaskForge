@@ -188,7 +188,6 @@ export function ProjectSettingsPanel({
           </form>
 
           <div className="mt-auto flex flex-col gap-2 border-t border-neutral-200 pt-5 dark:border-neutral-800">
-            <span className="text-xs font-medium text-red-600 dark:text-red-400">Zona de risco</span>
             <button
               type="button"
               onClick={() => deleteRef.current?.open()}

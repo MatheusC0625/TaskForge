@@ -14,8 +14,6 @@ import {
 
 export type ActionState = { error?: string };
 
-const DEFAULT_COLUMNS = ["A Fazer", "Em Andamento", "Concluído"];
-
 async function assertProjectOwner(projectId: string, userId: string) {
   const project = await prisma.project.findUnique({
     where: { id: projectId },
@@ -70,9 +68,6 @@ export async function createProject(
       color: parsed.data.color || "#10b981",
       githubRepoUrl: parsed.data.githubRepoUrl || null,
       ownerId: session.user.id,
-      columns: {
-        create: DEFAULT_COLUMNS.map((name, order) => ({ name, order })),
-      },
     },
   });
 
