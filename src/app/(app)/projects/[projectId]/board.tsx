@@ -126,6 +126,19 @@ export function Board({
       onDragStart={handleDragStart}
       onDragEnd={handleDragEnd}
     >
+      {optimisticColumns.length === 0 ? (
+        <div className="flex flex-col items-center gap-4 rounded-xl border border-dashed border-neutral-300 py-16 text-center dark:border-neutral-700">
+          <div>
+            <p className="text-neutral-900 dark:text-neutral-100">Este quadro ainda não tem colunas.</p>
+            <p className="mt-1 text-sm text-neutral-500 dark:text-neutral-400">
+              Crie a primeira coluna para começar a organizar as tarefas.
+            </p>
+          </div>
+          <div className="w-full max-w-xs">
+            <NewColumnForm projectId={projectId} />
+          </div>
+        </div>
+      ) : (
       <div className="flex gap-4 overflow-x-auto pb-4">
         {optimisticColumns.map((column, index) => {
           const visibleTasks = column.tasks.filter(filterPredicate);
@@ -171,6 +184,7 @@ export function Board({
           <NewColumnForm projectId={projectId} />
         </div>
       </div>
+      )}
 
       <DragOverlay>
         {activeTask ? (
