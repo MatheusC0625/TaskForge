@@ -20,14 +20,13 @@ type ProjectFormDialogProps = {
   submitLabel: string;
   pendingLabel: string;
   action: (prevState: ActionState, formData: FormData) => Promise<ActionState>;
-  defaultValues?: { name: string; description: string; color?: string; githubRepoUrl?: string };
 };
 
 export const ProjectFormDialog = forwardRef<ModalHandle, ProjectFormDialogProps>(
-  function ProjectFormDialog({ title, submitLabel, pendingLabel, action, defaultValues }, ref) {
+  function ProjectFormDialog({ title, submitLabel, pendingLabel, action }, ref) {
     const modalRef = useRef<ModalHandle>(null);
     const [error, setError] = useState<string | null>(null);
-    const [color, setColor] = useState(defaultValues?.color ?? PROJECT_COLORS[0]);
+    const [color, setColor] = useState(PROJECT_COLORS[0]);
     const [isPending, startTransition] = useTransition();
     const nameId = useId();
     const descriptionId = useId();
@@ -66,7 +65,6 @@ export const ProjectFormDialog = forwardRef<ModalHandle, ProjectFormDialogProps>
               type="text"
               required
               maxLength={80}
-              defaultValue={defaultValues?.name}
               className="rounded-lg border border-neutral-300 px-3 py-2 text-sm outline-none focus:border-emerald-600 focus:ring-1 focus:ring-emerald-600 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-100 dark:focus:border-emerald-500 dark:focus:ring-emerald-500"
             />
           </div>
@@ -80,7 +78,6 @@ export const ProjectFormDialog = forwardRef<ModalHandle, ProjectFormDialogProps>
               name="description"
               rows={3}
               maxLength={500}
-              defaultValue={defaultValues?.description}
               className="resize-none rounded-lg border border-neutral-300 px-3 py-2 text-sm outline-none focus:border-emerald-600 focus:ring-1 focus:ring-emerald-600 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-100 dark:focus:border-emerald-500 dark:focus:ring-emerald-500"
             />
           </div>
@@ -116,7 +113,6 @@ export const ProjectFormDialog = forwardRef<ModalHandle, ProjectFormDialogProps>
               name="githubRepoUrl"
               type="url"
               placeholder="https://github.com/usuario/repositorio"
-              defaultValue={defaultValues?.githubRepoUrl}
               className="rounded-lg border border-neutral-300 px-3 py-2 text-sm outline-none focus:border-emerald-600 focus:ring-1 focus:ring-emerald-600 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-100 dark:focus:border-emerald-500 dark:focus:ring-emerald-500"
             />
             <p className="text-xs text-neutral-400 dark:text-neutral-500">
