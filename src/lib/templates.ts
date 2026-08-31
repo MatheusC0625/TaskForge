@@ -8,6 +8,7 @@ export type ProjectTemplate = {
   name: string;
   description: string;
   columns: ProjectTemplateColumn[];
+  pro?: boolean;
 };
 
 export const PROJECT_TEMPLATES: ProjectTemplate[] = [
@@ -61,6 +62,32 @@ export const PROJECT_TEMPLATES: ProjectTemplate[] = [
       { name: "Praticar (labs)", sampleTasks: ["Montar lab de firewall"] },
       { name: "Revisar", sampleTasks: ["Refazer simulado geral"] },
       { name: "Pronto para a prova", sampleTasks: ["Agendar exame"] },
+    ],
+  },
+  {
+    id: "cicd-pipeline",
+    name: "Pipeline de CI/CD",
+    description: "Acompanhe builds do commit até a produção.",
+    pro: true,
+    columns: [
+      { name: "Build", sampleTasks: ["Compilar branch main"] },
+      { name: "Testes Automatizados", sampleTasks: ["Rodar suíte de integração"] },
+      { name: "Deploy Staging", sampleTasks: ["Validar em ambiente de homologação"] },
+      { name: "Deploy Produção", sampleTasks: ["Liberar para os usuários"] },
+      { name: "Monitorando", sampleTasks: ["Acompanhar métricas pós-deploy"] },
+    ],
+  },
+  {
+    id: "incident-response",
+    name: "Resposta a Incidente",
+    description: "Conduza um incidente de segurança do início ao fim.",
+    pro: true,
+    columns: [
+      { name: "Detecção", sampleTasks: ["Confirmar alerta do SIEM"] },
+      { name: "Contenção", sampleTasks: ["Isolar host comprometido"] },
+      { name: "Erradicação", sampleTasks: ["Remover artefato malicioso"] },
+      { name: "Recuperação", sampleTasks: ["Restaurar serviço afetado"] },
+      { name: "Lições Aprendidas", sampleTasks: ["Documentar linha do tempo"] },
     ],
   },
 ];

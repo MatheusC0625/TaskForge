@@ -12,6 +12,12 @@ export default async function ProjectsPage({
   const { template } = await searchParams;
   const session = await auth();
 
+  const user = await prisma.user.findUnique({
+    where: { id: session!.user.id },
+    select: { plan: true },
+  });
+  const isPro = user?.plan === "PRO";
+
   const projects = await prisma.project.findMany({
     where: { ownerId: session!.user.id },
     orderBy: { updatedAt: "desc" },
@@ -20,7 +26,7 @@ export default async function ProjectsPage({
       name: true,
       description: true,
       color: true,
-      githubRepoUrl: true,
+      repos: { select: { id: true, url: true }, orderBy: { createdAt: "asc" } },
       _count: { select: { columns: true, tasks: true } },
     },
   });
@@ -34,7 +40,7 @@ export default async function ProjectsPage({
           </h1>
           <p className="text-sm text-neutral-500 dark:text-neutral-400">Seus quadros Kanban.</p>
         </div>
-        <NewProjectButton initialTemplateId={template} />
+        <NewProjectButton initialTemplateId={template} isPro={isPro} />
       </div>
 
       {projects.length === 0 ? (
@@ -44,7 +50,7 @@ export default async function ProjectsPage({
             Crie o primeiro projeto para organizar suas tarefas em um quadro Kanban.
           </p>
           <div className="mt-2">
-            <NewProjectButton />
+            <NewProjectButton isPro={isPro} />
           </div>
         </div>
       ) : (
@@ -57,13 +63,14 @@ export default async function ProjectsPage({
                 name: project.name,
                 description: project.description,
                 color: project.color,
-                githubRepoUrl: project.githubRepoUrl,
+                repos: project.repos,
                 columnCount: project._count.columns,
                 taskCount: project._count.tasks,
               }}
-              githubBadge={
-                project.githubRepoUrl ? <GithubRepoBadge repoUrl={project.githubRepoUrl} /> : undefined
-              }
+              githubBadges={project.repos.map((repo) => (
+                <GithubRepoBadge key={repo.id} repoUrl={repo.url} />
+              ))}
+              isPro={isPro}
             />
           ))}
         </div>

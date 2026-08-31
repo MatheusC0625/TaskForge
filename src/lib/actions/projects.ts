@@ -10,6 +10,7 @@ import {
   renameProjectSchema,
   projectColorSchema,
   projectDetailsSchema,
+  projectRepoSchema,
 } from "@/lib/validations/project";
 import { getProjectTemplate } from "@/lib/templates";
 
@@ -24,20 +25,14 @@ async function assertProjectOwner(projectId: string, userId: string) {
 }
 
 const FREE_PLAN_REPO_LIMIT_MESSAGE =
-  "Seu plano gratuito permite vincular apenas 1 repositório do GitHub no total. Desvincule o outro projeto ou assine o plano Pro em /upgrade.";
+  "Seu plano gratuito permite vincular apenas 1 repositório do GitHub no total. Remova o outro repositório ou assine o plano Pro em /upgrade.";
 
-async function canLinkGithubRepo(userId: string, projectId: string | null) {
+async function canAddGithubRepo(userId: string) {
   const user = await prisma.user.findUnique({ where: { id: userId }, select: { plan: true } });
   if (user?.plan === "PRO") return true;
 
-  const otherLinkedCount = await prisma.project.count({
-    where: {
-      ownerId: userId,
-      githubRepoUrl: { not: null },
-      ...(projectId ? { id: { not: projectId } } : {}),
-    },
-  });
-  return otherLinkedCount === 0;
+  const linkedCount = await prisma.projectRepo.count({ where: { project: { ownerId: userId } } });
+  return linkedCount === 0;
 }
 
 export async function createProject(
@@ -59,19 +54,28 @@ export async function createProject(
     return { error: parsed.error.issues[0]?.message ?? "Dados inválidos." };
   }
 
-  if (parsed.data.githubRepoUrl && !(await canLinkGithubRepo(session.user.id, null))) {
+  if (parsed.data.githubRepoUrl && !(await canAddGithubRepo(session.user.id))) {
     return { error: FREE_PLAN_REPO_LIMIT_MESSAGE };
   }
 
   const template = getProjectTemplate(parsed.data.templateId);
+
+  if (template?.pro) {
+    const user = await prisma.user.findUnique({ where: { id: session.user.id }, select: { plan: true } });
+    if (user?.plan !== "PRO") {
+      return { error: "Esse template é exclusivo do plano Pro. Assine em /upgrade para usá-lo." };
+    }
+  }
 
   const project = await prisma.project.create({
     data: {
       name: parsed.data.name,
       description: parsed.data.description || null,
       color: parsed.data.color || "#10b981",
-      githubRepoUrl: parsed.data.githubRepoUrl || null,
       ownerId: session.user.id,
+      ...(parsed.data.githubRepoUrl
+        ? { repos: { create: [{ url: parsed.data.githubRepoUrl }] } }
+        : {}),
       ...(template && template.columns.length > 0
         ? {
             columns: {
@@ -136,7 +140,6 @@ export async function updateProjectDetails(
 
   const parsed = projectDetailsSchema.safeParse({
     description: formData.get("description"),
-    githubRepoUrl: formData.get("githubRepoUrl"),
   });
   if (!parsed.success) {
     return { error: parsed.error.issues[0]?.message ?? "Dados inválidos." };
@@ -146,21 +149,60 @@ export async function updateProjectDetails(
     return { error: "Projeto não encontrado." };
   }
 
-  if (parsed.data.githubRepoUrl && !(await canLinkGithubRepo(session.user.id, projectId))) {
-    return { error: FREE_PLAN_REPO_LIMIT_MESSAGE };
-  }
-
   await prisma.project.update({
     where: { id: projectId },
-    data: {
-      description: parsed.data.description || null,
-      githubRepoUrl: parsed.data.githubRepoUrl || null,
-    },
+    data: { description: parsed.data.description || null },
   });
 
   revalidatePath("/projects");
   revalidatePath(`/projects/${projectId}`);
   return {};
+}
+
+export async function addProjectRepo(
+  projectId: string,
+  _prevState: ActionState,
+  formData: FormData,
+): Promise<ActionState> {
+  const session = await auth();
+  if (!session?.user) redirect("/login");
+
+  const parsed = projectRepoSchema.safeParse({ url: formData.get("url") });
+  if (!parsed.success) {
+    return { error: parsed.error.issues[0]?.message ?? "URL inválida." };
+  }
+
+  if (!(await assertProjectOwner(projectId, session.user.id))) {
+    return { error: "Projeto não encontrado." };
+  }
+
+  if (!(await canAddGithubRepo(session.user.id))) {
+    return { error: FREE_PLAN_REPO_LIMIT_MESSAGE };
+  }
+
+  await prisma.projectRepo.create({ data: { url: parsed.data.url, projectId } });
+
+  revalidatePath("/projects");
+  revalidatePath(`/projects/${projectId}`);
+  return {};
+}
+
+export async function removeProjectRepo(repoId: string): Promise<void> {
+  const session = await auth();
+  if (!session?.user) redirect("/login");
+
+  const repo = await prisma.projectRepo.findUnique({
+    where: { id: repoId },
+    select: { projectId: true, project: { select: { ownerId: true } } },
+  });
+  if (!repo || repo.project.ownerId !== session.user.id) {
+    throw new Error("Repositório não encontrado.");
+  }
+
+  await prisma.projectRepo.delete({ where: { id: repoId } });
+
+  revalidatePath("/projects");
+  revalidatePath(`/projects/${repo.projectId}`);
 }
 
 export async function deleteProject(projectId: string): Promise<void> {

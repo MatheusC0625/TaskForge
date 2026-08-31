@@ -1,8 +1,25 @@
-import { getGithubRepoInfo } from "@/lib/github";
+import { auth } from "@/auth";
+import { prisma } from "@/lib/prisma";
+import { getGithubRepoInfo, getCiStatus } from "@/lib/github";
+
+const CI_DOT_STYLES: Record<"success" | "failure" | "pending", { className: string; label: string }> = {
+  success: { className: "bg-emerald-500", label: "CI passou" },
+  failure: { className: "bg-red-500", label: "CI falhou" },
+  pending: { className: "bg-amber-500", label: "CI em andamento" },
+};
 
 export async function GithubRepoBadge({ repoUrl }: { repoUrl: string }) {
   const info = await getGithubRepoInfo(repoUrl);
   if (!info) return null;
+
+  const session = await auth();
+  const user = session?.user
+    ? await prisma.user.findUnique({ where: { id: session.user.id }, select: { plan: true } })
+    : null;
+  const isPro = user?.plan === "PRO";
+
+  const ciStatus = isPro ? await getCiStatus(repoUrl, info.defaultBranch) : "unknown";
+  const ciStyle = ciStatus !== "unknown" ? CI_DOT_STYLES[ciStatus] : null;
 
   return (
     <a
@@ -20,6 +37,14 @@ export async function GithubRepoBadge({ repoUrl }: { repoUrl: string }) {
         <span className="flex items-center gap-0.5 text-neutral-400 dark:text-neutral-600">
           ★ {info.stars}
         </span>
+      )}
+      {ciStyle && (
+        <span
+          className={`h-1.5 w-1.5 shrink-0 rounded-full ${ciStyle.className}`}
+          role="img"
+          aria-label={ciStyle.label}
+          title={ciStyle.label}
+        />
       )}
     </a>
   );
