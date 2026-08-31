@@ -2,6 +2,7 @@
 
 import { forwardRef, useId, useImperativeHandle, useRef, useState, useTransition } from "react";
 import { Modal, type ModalHandle } from "@/components/ui/modal";
+import { PROJECT_TEMPLATES } from "@/lib/templates";
 import type { ActionState } from "@/lib/actions/projects";
 
 const PROJECT_COLORS = [
@@ -27,6 +28,7 @@ export const ProjectFormDialog = forwardRef<ModalHandle, ProjectFormDialogProps>
     const modalRef = useRef<ModalHandle>(null);
     const [error, setError] = useState<string | null>(null);
     const [color, setColor] = useState(PROJECT_COLORS[0]);
+    const [templateId, setTemplateId] = useState(PROJECT_TEMPLATES[0].id);
     const [isPending, startTransition] = useTransition();
     const nameId = useId();
     const descriptionId = useId();
@@ -35,6 +37,7 @@ export const ProjectFormDialog = forwardRef<ModalHandle, ProjectFormDialogProps>
     useImperativeHandle(ref, () => ({
       open: () => {
         setError(null);
+        setTemplateId(PROJECT_TEMPLATES[0].id);
         modalRef.current?.open();
       },
       close: () => modalRef.current?.close(),
@@ -55,6 +58,33 @@ export const ProjectFormDialog = forwardRef<ModalHandle, ProjectFormDialogProps>
     return (
       <Modal ref={modalRef} title={title}>
         <form action={handleSubmit} className="flex flex-col gap-4">
+          <div className="flex flex-col gap-1.5">
+            <span className="text-sm font-medium text-neutral-700 dark:text-neutral-300">Modelo</span>
+            <div className="flex flex-col gap-1.5">
+              {PROJECT_TEMPLATES.map((template) => (
+                <button
+                  key={template.id}
+                  type="button"
+                  onClick={() => setTemplateId(template.id)}
+                  aria-pressed={templateId === template.id}
+                  className={`rounded-lg border px-3 py-2 text-left transition ${
+                    templateId === template.id
+                      ? "border-emerald-600 bg-emerald-50 dark:border-emerald-500 dark:bg-emerald-950/30"
+                      : "border-neutral-200 hover:border-neutral-300 dark:border-neutral-700 dark:hover:border-neutral-600"
+                  }`}
+                >
+                  <span className="block text-sm font-medium text-neutral-900 dark:text-neutral-100">
+                    {template.name}
+                  </span>
+                  <span className="block text-xs text-neutral-500 dark:text-neutral-400">
+                    {template.description}
+                  </span>
+                </button>
+              ))}
+            </div>
+            <input type="hidden" name="templateId" value={templateId} />
+          </div>
+
           <div className="flex flex-col gap-1.5">
             <label htmlFor={nameId} className="text-sm font-medium text-neutral-700 dark:text-neutral-300">
               Nome
