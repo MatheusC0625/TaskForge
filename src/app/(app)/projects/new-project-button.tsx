@@ -1,12 +1,18 @@
 "use client";
 
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 import type { ModalHandle } from "@/components/ui/modal";
 import { ProjectFormDialog } from "./project-form-dialog";
 import { createProject } from "@/lib/actions/projects";
 
-export function NewProjectButton() {
+export function NewProjectButton({ initialTemplateId }: { initialTemplateId?: string }) {
   const modalRef = useRef<ModalHandle>(null);
+
+  useEffect(() => {
+    if (initialTemplateId) {
+      modalRef.current?.open();
+    }
+  }, [initialTemplateId]);
 
   return (
     <>
@@ -23,6 +29,7 @@ export function NewProjectButton() {
         submitLabel="Criar projeto"
         pendingLabel="Criando..."
         action={createProject}
+        initialTemplateId={initialTemplateId}
       />
     </>
   );

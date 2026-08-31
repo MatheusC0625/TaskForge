@@ -4,7 +4,12 @@ import { GithubRepoBadge } from "@/components/github-repo-badge";
 import { NewProjectButton } from "./new-project-button";
 import { ProjectCard } from "./project-card";
 
-export default async function ProjectsPage() {
+export default async function ProjectsPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ template?: string }>;
+}) {
+  const { template } = await searchParams;
   const session = await auth();
 
   const projects = await prisma.project.findMany({
@@ -29,7 +34,7 @@ export default async function ProjectsPage() {
           </h1>
           <p className="text-sm text-neutral-500 dark:text-neutral-400">Seus quadros Kanban.</p>
         </div>
-        <NewProjectButton />
+        <NewProjectButton initialTemplateId={template} />
       </div>
 
       {projects.length === 0 ? (

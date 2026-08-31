@@ -2,7 +2,7 @@
 
 import { forwardRef, useId, useImperativeHandle, useRef, useState, useTransition } from "react";
 import { Modal, type ModalHandle } from "@/components/ui/modal";
-import { PROJECT_TEMPLATES } from "@/lib/templates";
+import { PROJECT_TEMPLATES, getProjectTemplate } from "@/lib/templates";
 import type { ActionState } from "@/lib/actions/projects";
 
 const PROJECT_COLORS = [
@@ -21,14 +21,17 @@ type ProjectFormDialogProps = {
   submitLabel: string;
   pendingLabel: string;
   action: (prevState: ActionState, formData: FormData) => Promise<ActionState>;
+  initialTemplateId?: string;
 };
 
 export const ProjectFormDialog = forwardRef<ModalHandle, ProjectFormDialogProps>(
-  function ProjectFormDialog({ title, submitLabel, pendingLabel, action }, ref) {
+  function ProjectFormDialog({ title, submitLabel, pendingLabel, action, initialTemplateId }, ref) {
     const modalRef = useRef<ModalHandle>(null);
     const [error, setError] = useState<string | null>(null);
     const [color, setColor] = useState(PROJECT_COLORS[0]);
-    const [templateId, setTemplateId] = useState(PROJECT_TEMPLATES[0].id);
+    const [templateId, setTemplateId] = useState(
+      getProjectTemplate(initialTemplateId)?.id ?? PROJECT_TEMPLATES[0].id,
+    );
     const [isPending, startTransition] = useTransition();
     const nameId = useId();
     const descriptionId = useId();
@@ -37,7 +40,7 @@ export const ProjectFormDialog = forwardRef<ModalHandle, ProjectFormDialogProps>
     useImperativeHandle(ref, () => ({
       open: () => {
         setError(null);
-        setTemplateId(PROJECT_TEMPLATES[0].id);
+        setTemplateId(getProjectTemplate(initialTemplateId)?.id ?? PROJECT_TEMPLATES[0].id);
         modalRef.current?.open();
       },
       close: () => modalRef.current?.close(),
