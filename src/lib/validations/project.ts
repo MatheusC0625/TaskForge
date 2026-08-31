@@ -44,12 +44,13 @@ export const projectDetailsSchema = z.object({
     .trim()
     .max(500, "A descrição pode ter no máximo 500 caracteres.")
     .optional(),
-  githubRepoUrl: z
+});
+
+export const projectRepoSchema = z.object({
+  url: z
     .string()
     .trim()
-    .regex(GITHUB_REPO_URL_REGEX, "Informe uma URL válida, ex: https://github.com/usuario/repositorio")
-    .optional()
-    .or(z.literal("")),
+    .regex(GITHUB_REPO_URL_REGEX, "Informe uma URL válida, ex: https://github.com/usuario/repositorio"),
 });
 
 export const columnSchema = z.object({

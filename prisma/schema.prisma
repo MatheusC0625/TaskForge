@@ -50,13 +50,12 @@ model PasswordResetToken {
 }
 
 model Project {
-  id            String   @id @default(cuid())
-  name          String
-  description   String?
-  color         String   @default("#10b981")
-  githubRepoUrl String?
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
+  id          String   @id @default(cuid())
+  name        String
+  description String?
+  color       String   @default("#10b981")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 
   ownerId String
   owner   User   @relation(fields: [ownerId], references: [id], onDelete: Cascade)
@@ -64,8 +63,20 @@ model Project {
   columns Column[]
   tasks   Task[]
   tags    Tag[]
+  repos   ProjectRepo[]
 
   @@index([ownerId])
+}
+
+model ProjectRepo {
+  id        String   @id @default(cuid())
+  url       String
+  createdAt DateTime @default(now())
+
+  projectId String
+  project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@index([projectId])
 }
 
 model Column {

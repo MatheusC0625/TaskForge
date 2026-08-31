@@ -5,7 +5,13 @@ import type { ModalHandle } from "@/components/ui/modal";
 import { ProjectFormDialog } from "./project-form-dialog";
 import { createProject } from "@/lib/actions/projects";
 
-export function NewProjectButton({ initialTemplateId }: { initialTemplateId?: string }) {
+export function NewProjectButton({
+  initialTemplateId,
+  isPro = false,
+}: {
+  initialTemplateId?: string;
+  isPro?: boolean;
+}) {
   const modalRef = useRef<ModalHandle>(null);
 
   useEffect(() => {
@@ -30,6 +36,7 @@ export function NewProjectButton({ initialTemplateId }: { initialTemplateId?: st
         pendingLabel="Criando..."
         action={createProject}
         initialTemplateId={initialTemplateId}
+        isPro={isPro}
       />
     </>
   );

@@ -13,6 +13,12 @@ export default async function ProjectPage({
   const { projectId } = await params;
   const session = await auth();
 
+  const user = await prisma.user.findUnique({
+    where: { id: session!.user.id },
+    select: { plan: true },
+  });
+  const isPro = user?.plan === "PRO";
+
   const project = await prisma.project.findUnique({
     where: { id: projectId },
     select: {
@@ -20,8 +26,8 @@ export default async function ProjectPage({
       name: true,
       description: true,
       color: true,
-      githubRepoUrl: true,
       ownerId: true,
+      repos: { select: { id: true, url: true }, orderBy: { createdAt: "asc" } },
       tags: {
         orderBy: { name: "asc" },
         select: { id: true, name: true, color: true },
@@ -77,11 +83,12 @@ export default async function ProjectPage({
           name: project.name,
           description: project.description,
           color: project.color,
-          githubRepoUrl: project.githubRepoUrl,
+          repos: project.repos,
         }}
-        githubBadge={
-          project.githubRepoUrl ? <GithubRepoBadge repoUrl={project.githubRepoUrl} /> : undefined
-        }
+        githubBadges={project.repos.map((repo) => (
+          <GithubRepoBadge key={repo.id} repoUrl={repo.url} />
+        ))}
+        isPro={isPro}
       />
 
       <ProjectView projectId={project.id} columns={columns} projectTags={project.tags} />
