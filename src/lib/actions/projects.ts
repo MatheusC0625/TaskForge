@@ -11,6 +11,7 @@ import {
   projectColorSchema,
   projectDetailsSchema,
 } from "@/lib/validations/project";
+import { getProjectTemplate } from "@/lib/templates";
 
 export type ActionState = { error?: string };
 
@@ -51,6 +52,7 @@ export async function createProject(
     description: formData.get("description"),
     color: formData.get("color"),
     githubRepoUrl: formData.get("githubRepoUrl"),
+    templateId: formData.get("templateId"),
   });
 
   if (!parsed.success) {
@@ -61,6 +63,8 @@ export async function createProject(
     return { error: FREE_PLAN_REPO_LIMIT_MESSAGE };
   }
 
+  const template = getProjectTemplate(parsed.data.templateId);
+
   const project = await prisma.project.create({
     data: {
       name: parsed.data.name,
@@ -68,6 +72,9 @@ export async function createProject(
       color: parsed.data.color || "#10b981",
       githubRepoUrl: parsed.data.githubRepoUrl || null,
       ownerId: session.user.id,
+      ...(template && template.columns.length > 0
+        ? { columns: { create: template.columns.map((name, order) => ({ name, order })) } }
+        : {}),
     },
   });
 

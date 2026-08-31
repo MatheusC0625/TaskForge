@@ -23,6 +23,7 @@ export const projectSchema = z.object({
     .regex(GITHUB_REPO_URL_REGEX, "Informe uma URL válida, ex: https://github.com/usuario/repositorio")
     .optional()
     .or(z.literal("")),
+  templateId: z.string().optional(),
 });
 
 export const renameProjectSchema = z.object({
