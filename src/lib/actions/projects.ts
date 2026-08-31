@@ -5,11 +5,24 @@ import { redirect } from "next/navigation";
 
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
-import { projectSchema } from "@/lib/validations/project";
+import {
+  projectSchema,
+  renameProjectSchema,
+  projectColorSchema,
+  projectDetailsSchema,
+} from "@/lib/validations/project";
 
 export type ActionState = { error?: string };
 
 const DEFAULT_COLUMNS = ["A Fazer", "Em Andamento", "Concluído"];
+
+async function assertProjectOwner(projectId: string, userId: string) {
+  const project = await prisma.project.findUnique({
+    where: { id: projectId },
+    select: { ownerId: true },
+  });
+  return !!project && project.ownerId === userId;
+}
 
 export async function createProject(
   _prevState: ActionState,
@@ -46,7 +59,47 @@ export async function createProject(
   redirect(`/projects/${project.id}`);
 }
 
-export async function updateProject(
+export async function renameProject(projectId: string, name: string): Promise<ActionState> {
+  const session = await auth();
+  if (!session?.user) redirect("/login");
+
+  const parsed = renameProjectSchema.safeParse({ name });
+  if (!parsed.success) {
+    return { error: parsed.error.issues[0]?.message ?? "Nome inválido." };
+  }
+
+  if (!(await assertProjectOwner(projectId, session.user.id))) {
+    return { error: "Projeto não encontrado." };
+  }
+
+  await prisma.project.update({ where: { id: projectId }, data: { name: parsed.data.name } });
+
+  revalidatePath("/projects");
+  revalidatePath(`/projects/${projectId}`);
+  return {};
+}
+
+export async function updateProjectColor(projectId: string, color: string): Promise<ActionState> {
+  const session = await auth();
+  if (!session?.user) redirect("/login");
+
+  const parsed = projectColorSchema.safeParse({ color });
+  if (!parsed.success) {
+    return { error: parsed.error.issues[0]?.message ?? "Cor inválida." };
+  }
+
+  if (!(await assertProjectOwner(projectId, session.user.id))) {
+    return { error: "Projeto não encontrado." };
+  }
+
+  await prisma.project.update({ where: { id: projectId }, data: { color: parsed.data.color } });
+
+  revalidatePath("/projects");
+  revalidatePath(`/projects/${projectId}`);
+  return {};
+}
+
+export async function updateProjectDetails(
   projectId: string,
   _prevState: ActionState,
   formData: FormData,
@@ -54,30 +107,22 @@ export async function updateProject(
   const session = await auth();
   if (!session?.user) redirect("/login");
 
-  const project = await prisma.project.findUnique({
-    where: { id: projectId },
-    select: { ownerId: true },
-  });
-  if (!project || project.ownerId !== session.user.id) {
-    return { error: "Projeto não encontrado." };
-  }
-
-  const parsed = projectSchema.safeParse({
-    name: formData.get("name"),
+  const parsed = projectDetailsSchema.safeParse({
     description: formData.get("description"),
-    color: formData.get("color"),
     githubRepoUrl: formData.get("githubRepoUrl"),
   });
   if (!parsed.success) {
     return { error: parsed.error.issues[0]?.message ?? "Dados inválidos." };
   }
 
+  if (!(await assertProjectOwner(projectId, session.user.id))) {
+    return { error: "Projeto não encontrado." };
+  }
+
   await prisma.project.update({
     where: { id: projectId },
     data: {
-      name: parsed.data.name,
       description: parsed.data.description || null,
-      color: parsed.data.color || "#10b981",
       githubRepoUrl: parsed.data.githubRepoUrl || null,
     },
   });
