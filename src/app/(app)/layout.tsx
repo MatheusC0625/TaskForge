@@ -1,12 +1,19 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { auth } from "@/auth";
+import { prisma } from "@/lib/prisma";
 import { SignOutButton } from "@/components/sign-out-button";
 import { ThemeToggle } from "@/components/theme-toggle";
 
 export default async function AppLayout({ children }: { children: React.ReactNode }) {
   const session = await auth();
   if (!session?.user) redirect("/login");
+
+  const user = await prisma.user.findUnique({
+    where: { id: session.user.id },
+    select: { plan: true },
+  });
+  const isPro = user?.plan === "PRO";
 
   return (
     <div className="flex min-h-screen flex-col">
@@ -28,6 +35,16 @@ export default async function AppLayout({ children }: { children: React.ReactNod
           <span className="hidden text-sm text-neutral-500 sm:inline dark:text-neutral-400">
             {session.user.name}
           </span>
+          <Link
+            href="/upgrade"
+            className={`rounded-full px-2.5 py-1 text-xs font-medium transition ${
+              isPro
+                ? "bg-emerald-600 text-white hover:bg-emerald-700 dark:bg-emerald-500 dark:hover:bg-emerald-600"
+                : "border border-neutral-300 text-neutral-500 hover:bg-neutral-100 dark:border-neutral-700 dark:text-neutral-400 dark:hover:bg-neutral-800"
+            }`}
+          >
+            {isPro ? "Pro" : "Free"}
+          </Link>
           <ThemeToggle />
           <SignOutButton />
         </div>
