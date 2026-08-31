@@ -3,6 +3,8 @@ import { PRIORITY_ORDER } from "@/lib/priority";
 
 export const createTaskSchema = z.object({
   title: z.string().trim().min(1, "O título é obrigatório.").max(200, "Título muito longo."),
+  priority: z.enum(PRIORITY_ORDER).optional(),
+  dueDate: z.string().optional(),
 });
 
 export const updateTaskSchema = z.object({

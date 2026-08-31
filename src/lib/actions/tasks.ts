@@ -40,7 +40,11 @@ export async function createTask(
 
   const column = await requireColumnInProject(columnId, session.user.id);
 
-  const parsed = createTaskSchema.safeParse({ title: formData.get("title") });
+  const parsed = createTaskSchema.safeParse({
+    title: formData.get("title"),
+    priority: formData.get("priority") || undefined,
+    dueDate: formData.get("dueDate") || undefined,
+  });
   if (!parsed.success) {
     return { error: parsed.error.issues[0]?.message ?? "Título inválido." };
   }
@@ -53,6 +57,8 @@ export async function createTask(
   await prisma.task.create({
     data: {
       title: parsed.data.title,
+      priority: parsed.data.priority,
+      dueDate: parsed.data.dueDate ? new Date(`${parsed.data.dueDate}T00:00:00`) : null,
       order: (lastTask?.order ?? -1) + 1,
       columnId,
       projectId: column.projectId,
