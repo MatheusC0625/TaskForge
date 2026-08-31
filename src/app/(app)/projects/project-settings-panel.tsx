@@ -8,6 +8,8 @@ import {
   renameProject,
   updateProjectColor,
   updateProjectDetails,
+  addProjectRepo,
+  removeProjectRepo,
   deleteProject,
 } from "@/lib/actions/projects";
 
@@ -28,15 +30,17 @@ type ProjectSettingsPanelProps = {
     name: string;
     description: string | null;
     color: string;
-    githubRepoUrl: string | null;
+    repos: { id: string; url: string }[];
   };
   showNameField?: boolean;
+  isPro?: boolean;
   onClose: () => void;
 };
 
 export function ProjectSettingsPanel({
   project,
   showNameField = true,
+  isPro = false,
   onClose,
 }: ProjectSettingsPanelProps) {
   const router = useRouter();
@@ -44,13 +48,20 @@ export function ProjectSettingsPanel({
   const [nameError, setNameError] = useState<string | null>(null);
   const [color, setColor] = useState(project.color);
   const [description, setDescription] = useState(project.description ?? "");
-  const [githubRepoUrl, setGithubRepoUrl] = useState(project.githubRepoUrl ?? "");
   const [detailsError, setDetailsError] = useState<string | null>(null);
+  const [repos, setRepos] = useState(project.repos);
+  const [newRepoUrl, setNewRepoUrl] = useState("");
+  const [repoError, setRepoError] = useState<string | null>(null);
   const [isSavingDetails, startDetailsTransition] = useTransition();
   const [, startNameTransition] = useTransition();
   const [isSavingColor, startColorTransition] = useTransition();
+  const [isAddingRepo, startAddRepoTransition] = useTransition();
+  const [removingRepoId, setRemovingRepoId] = useState<string | null>(null);
+  const [, startRemoveRepoTransition] = useTransition();
   const [isDeleting, startDeleteTransition] = useTransition();
   const deleteRef = useRef<ModalHandle>(null);
+
+  const atFreeLimit = !isPro && repos.length >= 1;
 
   const handleNameBlur = () => {
     const trimmed = name.trim();
@@ -82,6 +93,29 @@ export function ProjectSettingsPanel({
     startDetailsTransition(async () => {
       const result = await updateProjectDetails(project.id, {}, formData);
       if (result?.error) setDetailsError(result.error);
+    });
+  };
+
+  const handleAddRepo = (formData: FormData) => {
+    setRepoError(null);
+    startAddRepoTransition(async () => {
+      const result = await addProjectRepo(project.id, {}, formData);
+      if (result?.error) {
+        setRepoError(result.error);
+        return;
+      }
+      const url = formData.get("url") as string;
+      setRepos((current) => [...current, { id: `pending-${Date.now()}`, url }]);
+      setNewRepoUrl("");
+    });
+  };
+
+  const handleRemoveRepo = (repoId: string) => {
+    setRemovingRepoId(repoId);
+    startRemoveRepoTransition(async () => {
+      await removeProjectRepo(repoId);
+      setRepos((current) => current.filter((repo) => repo.id !== repoId));
+      setRemovingRepoId(null);
     });
   };
 
@@ -162,20 +196,6 @@ export function ProjectSettingsPanel({
               />
             </div>
 
-            <div className="flex flex-col gap-1.5">
-              <label className="text-xs font-medium text-neutral-500 dark:text-neutral-400">
-                Repositório do GitHub
-              </label>
-              <input
-                name="githubRepoUrl"
-                type="url"
-                value={githubRepoUrl}
-                onChange={(event) => setGithubRepoUrl(event.target.value)}
-                placeholder="https://github.com/usuario/repositorio"
-                className="rounded-lg border border-neutral-300 px-3 py-2 text-sm outline-none focus:border-emerald-600 focus:ring-1 focus:ring-emerald-600 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-100 dark:focus:border-emerald-500 dark:focus:ring-emerald-500"
-              />
-            </div>
-
             {detailsError && <p className="text-sm text-red-600 dark:text-red-400">{detailsError}</p>}
 
             <button
@@ -186,6 +206,70 @@ export function ProjectSettingsPanel({
               {isSavingDetails ? "Salvando..." : "Salvar"}
             </button>
           </form>
+
+          <div className="flex flex-col gap-2 border-t border-neutral-200 pt-5 dark:border-neutral-800">
+            <div className="flex items-center justify-between">
+              <span className="text-xs font-medium text-neutral-500 dark:text-neutral-400">
+                Repositórios do GitHub
+              </span>
+              {isPro && (
+                <span className="rounded-full bg-emerald-600 px-2 py-0.5 text-[10px] font-medium text-white dark:bg-emerald-500">
+                  Pro: ilimitados
+                </span>
+              )}
+            </div>
+
+            {repos.length > 0 && (
+              <ul className="flex flex-col gap-1.5">
+                {repos.map((repo) => (
+                  <li
+                    key={repo.id}
+                    className="flex items-center justify-between gap-2 rounded-lg border border-neutral-200 px-3 py-1.5 text-sm dark:border-neutral-700"
+                  >
+                    <span className="truncate text-neutral-700 dark:text-neutral-300">{repo.url}</span>
+                    <button
+                      type="button"
+                      onClick={() => handleRemoveRepo(repo.id)}
+                      disabled={removingRepoId === repo.id}
+                      aria-label="Remover repositório"
+                      className="shrink-0 text-neutral-400 hover:text-red-600 disabled:opacity-60 dark:hover:text-red-400"
+                    >
+                      ✕
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            )}
+
+            {atFreeLimit ? (
+              <p className="text-xs text-neutral-400 dark:text-neutral-500">
+                Seu plano gratuito permite 1 repositório no total.{" "}
+                <a href="/upgrade" className="underline hover:text-neutral-600 dark:hover:text-neutral-300">
+                  Assine o Pro
+                </a>{" "}
+                para vincular mais.
+              </p>
+            ) : (
+              <form action={handleAddRepo} className="flex gap-2">
+                <input
+                  name="url"
+                  type="url"
+                  value={newRepoUrl}
+                  onChange={(event) => setNewRepoUrl(event.target.value)}
+                  placeholder="https://github.com/usuario/repositorio"
+                  className="flex-1 rounded-lg border border-neutral-300 px-3 py-1.5 text-sm outline-none focus:border-emerald-600 focus:ring-1 focus:ring-emerald-600 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-100 dark:focus:border-emerald-500 dark:focus:ring-emerald-500"
+                />
+                <button
+                  type="submit"
+                  disabled={isAddingRepo}
+                  className="shrink-0 rounded-lg border border-neutral-300 px-3 py-1.5 text-sm font-medium text-neutral-700 transition hover:bg-neutral-100 disabled:opacity-60 dark:border-neutral-700 dark:text-neutral-300 dark:hover:bg-neutral-800"
+                >
+                  {isAddingRepo ? "Adicionando..." : "Adicionar"}
+                </button>
+              </form>
+            )}
+            {repoError && <p className="text-xs text-red-600 dark:text-red-400">{repoError}</p>}
+          </div>
 
           <div className="mt-auto flex flex-col gap-2 border-t border-neutral-200 pt-5 dark:border-neutral-800">
             <button

@@ -11,12 +11,13 @@ type ProjectHeaderProps = {
     name: string;
     description: string | null;
     color: string;
-    githubRepoUrl: string | null;
+    repos: { id: string; url: string }[];
   };
-  githubBadge?: ReactNode;
+  githubBadges?: ReactNode[];
+  isPro?: boolean;
 };
 
-export function ProjectHeader({ project, githubBadge }: ProjectHeaderProps) {
+export function ProjectHeader({ project, githubBadges, isPro = false }: ProjectHeaderProps) {
   const [isPanelOpen, setIsPanelOpen] = useState(false);
   const [name, setName] = useState(project.name);
   const [nameError, setNameError] = useState<string | null>(null);
@@ -67,7 +68,9 @@ export function ProjectHeader({ project, githubBadge }: ProjectHeaderProps) {
                 {project.description}
               </p>
             )}
-            {githubBadge && <div className="mt-2 px-1">{githubBadge}</div>}
+            {githubBadges && githubBadges.length > 0 && (
+              <div className="mt-2 flex flex-wrap gap-1.5 px-1">{githubBadges}</div>
+            )}
           </div>
         </div>
 
@@ -84,6 +87,7 @@ export function ProjectHeader({ project, githubBadge }: ProjectHeaderProps) {
         <ProjectSettingsPanel
           project={project}
           showNameField={false}
+          isPro={isPro}
           onClose={() => setIsPanelOpen(false)}
         />
       )}
