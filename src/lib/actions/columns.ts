@@ -92,26 +92,26 @@ export async function deleteColumn(columnId: string): Promise<void> {
   revalidatePath(`/projects/${column.projectId}`);
 }
 
-export async function moveColumn(columnId: string, direction: "up" | "down"): Promise<void> {
+export async function reorderColumns(projectId: string, orderedIds: string[]): Promise<void> {
   const session = await auth();
   if (!session?.user) redirect("/login");
 
-  const column = await requireColumnOwnership(columnId, session.user.id);
-
-  const neighbor = await prisma.column.findFirst({
-    where: {
-      projectId: column.projectId,
-      order: direction === "up" ? { lt: column.order } : { gt: column.order },
-    },
-    orderBy: { order: direction === "up" ? "desc" : "asc" },
+  const project = await prisma.project.findUnique({
+    where: { id: projectId },
+    select: { ownerId: true, columns: { select: { id: true } } },
   });
+  if (!project || project.ownerId !== session.user.id) {
+    throw new Error("Projeto não encontrado.");
+  }
 
-  if (!neighbor) return;
+  const validIds = new Set(project.columns.map((c) => c.id));
+  if (orderedIds.length !== validIds.size || orderedIds.some((id) => !validIds.has(id))) {
+    throw new Error("Lista de colunas inválida.");
+  }
 
-  await prisma.$transaction([
-    prisma.column.update({ where: { id: column.id }, data: { order: neighbor.order } }),
-    prisma.column.update({ where: { id: neighbor.id }, data: { order: column.order } }),
-  ]);
+  await prisma.$transaction(
+    orderedIds.map((id, index) => prisma.column.update({ where: { id }, data: { order: index } })),
+  );
 
-  revalidatePath(`/projects/${column.projectId}`);
+  revalidatePath(`/projects/${projectId}`);
 }

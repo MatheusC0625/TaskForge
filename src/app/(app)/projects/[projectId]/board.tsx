@@ -11,8 +11,9 @@ import {
   type DragEndEvent,
   type DragStartEvent,
 } from "@dnd-kit/core";
-import { SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable";
+import { SortableContext, arrayMove, horizontalListSortingStrategy, verticalListSortingStrategy } from "@dnd-kit/sortable";
 import { ColumnItem } from "./column-item";
+import { SortableColumn } from "./sortable-column";
 import { NewColumnForm } from "./new-column-form";
 import { NewTaskForm } from "./new-task-form";
 import { TaskCard } from "./task-card";
@@ -20,6 +21,7 @@ import { SortableTaskCard } from "./sortable-task-card";
 import { DroppableColumn } from "./droppable-column";
 import type { TaskDetail } from "./task-panel";
 import { moveTask } from "@/lib/actions/tasks";
+import { reorderColumns } from "@/lib/actions/columns";
 
 export type BoardColumn = {
   id: string;
@@ -27,9 +29,16 @@ export type BoardColumn = {
   tasks: TaskDetail[];
 };
 
-type MoveAction = { taskId: string; toColumnId: string; toIndex: number };
+type BoardAction =
+  | { type: "moveTask"; taskId: string; toColumnId: string; toIndex: number }
+  | { type: "reorderColumns"; orderedIds: string[] };
 
-function moveTaskInColumns(state: BoardColumn[], action: MoveAction): BoardColumn[] {
+function boardReducer(state: BoardColumn[], action: BoardAction): BoardColumn[] {
+  if (action.type === "reorderColumns") {
+    const byId = new Map(state.map((column) => [column.id, column]));
+    return action.orderedIds.map((id) => byId.get(id)).filter((c): c is BoardColumn => !!c);
+  }
+
   let movedTask: TaskDetail | undefined;
 
   const withoutTask = state.map((column) => {
@@ -74,7 +83,8 @@ export function Board({
   onSelectTask: (taskId: string) => void;
 }) {
   const [activeTask, setActiveTask] = useState<TaskDetail | null>(null);
-  const [optimisticColumns, applyMove] = useOptimistic(columns, moveTaskInColumns);
+  const [activeColumnId, setActiveColumnId] = useState<string | null>(null);
+  const [optimisticColumns, dispatchOptimistic] = useOptimistic(columns, boardReducer);
   const [, startTransition] = useTransition();
 
   const sensors = useSensors(
@@ -82,6 +92,13 @@ export function Board({
   );
 
   const handleDragStart = (event: DragStartEvent) => {
+    const activeData = event.active.data.current as { type?: string; columnId?: string } | undefined;
+    if (activeData?.type === "column-sort") {
+      setActiveColumnId(activeData.columnId ?? null);
+      setActiveTask(null);
+      return;
+    }
+    setActiveColumnId(null);
     const task = optimisticColumns
       .flatMap((column) => column.tasks)
       .find((t) => t.id === event.active.id);
@@ -90,8 +107,35 @@ export function Board({
 
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
+    const activeData = active.data.current as { type?: string; columnId?: string } | undefined;
     setActiveTask(null);
+    setActiveColumnId(null);
     if (!over) return;
+
+    if (activeData?.type === "column-sort") {
+      const overData = over.data.current as { type?: string; columnId?: string } | undefined;
+      const fromId = activeData.columnId;
+      const toId =
+        overData?.type === "column-sort" || overData?.type === "task"
+          ? overData.columnId
+          : overData?.type === "column"
+            ? (over.id as string)
+            : undefined;
+      if (!fromId || !toId || fromId === toId) return;
+
+      const currentIds = optimisticColumns.map((column) => column.id);
+      const fromIndex = currentIds.indexOf(fromId);
+      const toIndex = currentIds.indexOf(toId);
+      if (fromIndex === -1 || toIndex === -1) return;
+
+      const orderedIds = arrayMove(currentIds, fromIndex, toIndex);
+
+      startTransition(async () => {
+        dispatchOptimistic({ type: "reorderColumns", orderedIds });
+        await reorderColumns(projectId, orderedIds);
+      });
+      return;
+    }
 
     const overData = over.data.current as { type?: "column" | "task"; columnId?: string } | undefined;
     const toColumnId = overData?.type === "column" ? (over.id as string) : overData?.columnId;
@@ -114,7 +158,7 @@ export function Board({
     }
 
     startTransition(async () => {
-      applyMove({ taskId, toColumnId, toIndex });
+      dispatchOptimistic({ type: "moveTask", taskId, toColumnId, toIndex });
       await moveTask(taskId, toColumnId, toIndex);
     });
   };
@@ -140,45 +184,50 @@ export function Board({
         </div>
       ) : (
       <div className="flex gap-4 overflow-x-auto pb-4">
-        {optimisticColumns.map((column, index) => {
-          const visibleTasks = column.tasks.filter(filterPredicate);
-          return (
-            <div
-              key={column.id}
-              className="flex w-72 shrink-0 flex-col gap-3 rounded-xl border border-neutral-200 bg-neutral-50/50 p-3 sm:w-80 dark:border-neutral-800 dark:bg-neutral-900/40"
-            >
-              <ColumnItem
-                column={column}
-                taskCount={column.tasks.length}
-                isFirst={index === 0}
-                isLast={index === optimisticColumns.length - 1}
-              />
-
-              <DroppableColumn columnId={column.id}>
-                <SortableContext
-                  items={visibleTasks.map((task) => task.id)}
-                  strategy={verticalListSortingStrategy}
-                >
-                  {visibleTasks.map((task) => (
-                    <SortableTaskCard
-                      key={task.id}
-                      task={toCardData(task)}
-                      columnId={column.id}
-                      onOpen={() => onSelectTask(task.id)}
+        <SortableContext
+          items={optimisticColumns.map((column) => `column:${column.id}`)}
+          strategy={horizontalListSortingStrategy}
+        >
+          {optimisticColumns.map((column) => {
+            const visibleTasks = column.tasks.filter(filterPredicate);
+            return (
+              <SortableColumn key={column.id} columnId={column.id}>
+                {(dragHandle) => (
+                  <>
+                    <ColumnItem
+                      column={column}
+                      taskCount={column.tasks.length}
+                      dragHandle={dragHandle}
                     />
-                  ))}
-                </SortableContext>
-                {visibleTasks.length === 0 && column.tasks.length > 0 && (
-                  <p className="px-1 py-1 text-xs text-neutral-400 dark:text-neutral-500">
-                    Nenhuma tarefa corresponde aos filtros.
-                  </p>
-                )}
-              </DroppableColumn>
 
-              <NewTaskForm columnId={column.id} />
-            </div>
-          );
-        })}
+                    <DroppableColumn columnId={column.id}>
+                      <SortableContext
+                        items={visibleTasks.map((task) => task.id)}
+                        strategy={verticalListSortingStrategy}
+                      >
+                        {visibleTasks.map((task) => (
+                          <SortableTaskCard
+                            key={task.id}
+                            task={toCardData(task)}
+                            columnId={column.id}
+                            onOpen={() => onSelectTask(task.id)}
+                          />
+                        ))}
+                      </SortableContext>
+                      {visibleTasks.length === 0 && column.tasks.length > 0 && (
+                        <p className="px-1 py-1 text-xs text-neutral-400 dark:text-neutral-500">
+                          Nenhuma tarefa corresponde aos filtros.
+                        </p>
+                      )}
+                    </DroppableColumn>
+
+                    <NewTaskForm columnId={column.id} />
+                  </>
+                )}
+              </SortableColumn>
+            );
+          })}
+        </SortableContext>
 
         <div className="w-64 shrink-0 sm:w-72">
           <NewColumnForm projectId={projectId} />
@@ -190,6 +239,12 @@ export function Board({
         {activeTask ? (
           <div className="w-72 rotate-2 opacity-90 sm:w-80">
             <TaskCard task={toCardData(activeTask)} onOpen={() => {}} />
+          </div>
+        ) : activeColumnId ? (
+          <div className="w-72 rotate-1 rounded-xl border border-neutral-200 bg-white p-3 opacity-90 shadow-lg sm:w-80 dark:border-neutral-800 dark:bg-neutral-900">
+            <span className="text-sm font-medium text-neutral-900 dark:text-neutral-100">
+              {optimisticColumns.find((column) => column.id === activeColumnId)?.name}
+            </span>
           </div>
         ) : null}
       </DragOverlay>
