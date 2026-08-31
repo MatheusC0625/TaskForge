@@ -16,11 +16,17 @@ enum Priority {
   HIGH
 }
 
+enum Plan {
+  FREE
+  PRO
+}
+
 model User {
   id                  String    @id @default(cuid())
   name                String
   email               String    @unique
   passwordHash        String?
+  plan                Plan      @default(FREE)
   failedLoginAttempts Int       @default(0)
   lockedUntil         DateTime?
   createdAt           DateTime  @default(now())
