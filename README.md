@@ -124,8 +124,13 @@ Ideias que ficaram de fora do escopo atual (projeto de portfólio, sem usuários
 - **Sugestões de código via IA** — usar a API da Claude (Anthropic) para analisar uma tarefa vinculada a um repositório e sugerir uma abordagem ou trecho de código, exibido como comentário na tarefa (sem escrita automática no repositório).
 - **Integração mais profunda com GitHub** — um GitHub App com permissão de escrita permitiria ir além da sugestão: abrir uma branch e um Pull Request automaticamente a partir de uma tarefa.
 - **Gateway de pagamento real** (Stripe) — o plano Pro hoje é simulado; uma versão futura poderia processar assinaturas de verdade em modo sandbox.
-- **Rate limiting** — não há throttle em `/api/register` nem no fluxo de recuperação de senha. Hoje isso é um risco teórico (sem usuários reais), mas a forma correta de resolver em produção seria um rate limit distribuído (ex: Upstash Redis), já que a Vercel roda o app em funções serverless sem memória compartilhada entre instâncias.
-- **Content-Security-Policy** — os demais headers de segurança (`X-Frame-Options`, `X-Content-Type-Options`, `Referrer-Policy`, `Permissions-Policy`, `Strict-Transport-Security`) já estão configurados em `next.config.ts`. Uma CSP completa foi deixada de fora por exigir nonces via middleware para os scripts inline do Next, o que tem mais risco de quebrar a aplicação do que o benefício justifica neste estágio.
+- **Rate limiting e Content-Security-Policy completa** — ver [`SECURITY.md`](./SECURITY.md) para detalhes do que já foi corrigido e do que ficou documentado como próximo passo.
+
+## Segurança
+
+Este projeto passou por um diagnóstico de segurança (auditoria de código + testes
+dinâmicos contra a aplicação rodando). Achados, correções aplicadas e o que ficou
+documentado como risco aceito estão em [`SECURITY.md`](./SECURITY.md).
 
 ## Sobre este projeto
 
