@@ -14,7 +14,13 @@ export function LoginForm({
 }) {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const callbackUrl = searchParams.get("callbackUrl") ?? "/dashboard";
+  const requestedCallbackUrl = searchParams.get("callbackUrl");
+  // Só aceitamos caminhos internos (começando com "/", mas não "//"), para
+  // evitar que um callbackUrl malicioso redirecione o usuário para outro site.
+  const callbackUrl =
+    requestedCallbackUrl && requestedCallbackUrl.startsWith("/") && !requestedCallbackUrl.startsWith("//")
+      ? requestedCallbackUrl
+      : "/dashboard";
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");

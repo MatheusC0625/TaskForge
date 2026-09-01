@@ -1,5 +1,5 @@
 import { expect, test } from "@playwright/test";
-import { createProject, registerUser, uniqueEmail } from "./helpers";
+import { createProject, login, registerUser, uniqueEmail } from "./helpers";
 
 test.describe("segurança entre usuários (IDOR)", () => {
   test("um usuário não consegue abrir o projeto de outro pela URL", async ({ browser }) => {
@@ -16,9 +16,9 @@ test.describe("segurança entre usuários (IDOR)", () => {
     await attackerPage.goto(projectUrl);
 
     // A checagem de ownership no Server Component chama notFound(): o
-    // atacante vê a página padrão de "não encontrado", nunca os dados do
+    // atacante vê a página de "não encontrado", nunca os dados do
     // projeto de outro usuário.
-    await expect(attackerPage.getByText("This page could not be found.")).toBeVisible();
+    await expect(attackerPage.getByText("Página não encontrada.")).toBeVisible();
     await expect(attackerPage.getByText("Projeto Privado")).not.toBeVisible();
     await attackerContext.close();
   });
@@ -36,5 +36,19 @@ test.describe("segurança entre usuários (IDOR)", () => {
     await otherPage.goto("/projects");
     await expect(otherPage.getByText("Projeto Exclusivo Do Dono")).not.toBeVisible();
     await otherContext.close();
+  });
+});
+
+test.describe("redirecionamento após login", () => {
+  test("um callbackUrl externo é ignorado e o login cai no dashboard", async ({ page }) => {
+    const email = uniqueEmail("redirect-guard");
+    await registerUser(page, { name: "Usuário Teste", email });
+    await page.locator('button:has-text("Sair")').click();
+    await page.waitForURL(/\/login/);
+
+    await page.goto("/login?callbackUrl=https%3A%2F%2Fevil.example.com%2Fphishing");
+    await login(page, { email });
+
+    await expect(page).toHaveURL(/\/dashboard/);
   });
 });
