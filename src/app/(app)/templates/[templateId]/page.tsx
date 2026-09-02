@@ -40,7 +40,7 @@ export default async function TemplateDetailPage({
         <p className="mt-1 text-sm text-neutral-500 dark:text-neutral-400">{template.description}</p>
       </div>
 
-      <div className="overflow-x-auto rounded-xl border border-neutral-200 bg-neutral-50/50 p-4 dark:border-neutral-800 dark:bg-neutral-900/40">
+      <div className="overflow-x-auto rounded-xl border border-neutral-200 bg-neutral-50/50 p-4 dark:border-neutral-800 dark:bg-[#161b22]/40">
         <TemplatePreview template={template} />
       </div>
 

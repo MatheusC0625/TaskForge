@@ -28,7 +28,7 @@ export function TemplatePreview({
           {column.sampleTasks.slice(0, compact ? 1 : 2).map((task) => (
             <div
               key={task}
-              className="rounded-md border border-neutral-200 bg-white px-1.5 py-1 text-[10px] leading-tight text-neutral-500 shadow-sm dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-400"
+              className="rounded-md border border-neutral-200 bg-[#f6f8fa] px-1.5 py-1 text-[10px] leading-tight text-neutral-500 shadow-sm dark:border-neutral-700 dark:bg-[#161b22] dark:text-neutral-400"
             >
               {task}
             </div>

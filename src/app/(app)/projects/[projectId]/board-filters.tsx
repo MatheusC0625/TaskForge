@@ -38,13 +38,13 @@ export function BoardFilters({
             value={search}
             onChange={(event) => onSearchChange(event.target.value)}
             placeholder="Buscar tarefas..."
-            className="w-full rounded-lg border border-neutral-300 px-3 py-1.5 text-sm outline-none focus:border-emerald-600 sm:w-56 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-100 dark:focus:border-emerald-500"
+            className="w-full rounded-lg border border-neutral-300 px-3 py-1.5 text-sm outline-none focus:border-emerald-600 sm:w-56 dark:border-neutral-700 dark:bg-[#161b22] dark:text-neutral-100 dark:focus:border-emerald-500"
           />
 
           <select
             value={priority}
             onChange={(event) => onPriorityChange(event.target.value as Priority | "ALL")}
-            className="rounded-lg border border-neutral-300 px-3 py-1.5 text-sm outline-none focus:border-emerald-600 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-100 dark:focus:border-emerald-500"
+            className="rounded-lg border border-neutral-300 px-3 py-1.5 text-sm outline-none focus:border-emerald-600 dark:border-neutral-700 dark:bg-[#161b22] dark:text-neutral-100 dark:focus:border-emerald-500"
           >
             <option value="ALL">Todas as prioridades</option>
             {PRIORITY_ORDER.map((option) => (

@@ -30,7 +30,7 @@ export function SortableColumn({
     <div
       ref={setNodeRef}
       style={style}
-      className="flex w-72 shrink-0 flex-col gap-3 rounded-xl border border-neutral-200 bg-neutral-50/50 p-3 sm:w-80 dark:border-neutral-800 dark:bg-neutral-900/40"
+      className="flex w-72 shrink-0 flex-col gap-3 rounded-xl border border-neutral-200 bg-neutral-50/50 p-3 sm:w-80 dark:border-neutral-800 dark:bg-[#161b22]/40"
     >
       {children({ attributes, listeners })}
     </div>

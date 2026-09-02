@@ -126,7 +126,7 @@ export function ProjectSettingsPanel({
         onClick={onClose}
         aria-hidden="true"
       />
-      <div className="slide-panel fixed inset-y-0 right-0 z-50 flex w-full max-w-md flex-col overflow-y-auto border-l border-neutral-200 bg-white shadow-xl dark:border-neutral-800 dark:bg-neutral-900">
+      <div className="slide-panel fixed inset-y-0 right-0 z-50 flex w-full max-w-md flex-col overflow-y-auto border-l border-neutral-200 bg-[#f6f8fa] shadow-xl dark:border-neutral-800 dark:bg-[#161b22]">
         <div className="flex items-center justify-between border-b border-neutral-200 px-5 py-4 dark:border-neutral-800">
           <span className="text-xs font-medium tracking-wide text-neutral-400 uppercase dark:text-neutral-500">
             Configurações do projeto
@@ -192,7 +192,7 @@ export function ProjectSettingsPanel({
                 value={description}
                 onChange={(event) => setDescription(event.target.value)}
                 placeholder="Descrição (opcional)"
-                className="resize-none rounded-lg border border-neutral-300 px-3 py-2 text-sm outline-none focus:border-emerald-600 focus:ring-1 focus:ring-emerald-600 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-100 dark:focus:border-emerald-500 dark:focus:ring-emerald-500"
+                className="resize-none rounded-lg border border-neutral-300 px-3 py-2 text-sm outline-none focus:border-emerald-600 focus:ring-1 focus:ring-emerald-600 dark:border-neutral-700 dark:bg-[#161b22] dark:text-neutral-100 dark:focus:border-emerald-500 dark:focus:ring-emerald-500"
               />
             </div>
 
@@ -257,7 +257,7 @@ export function ProjectSettingsPanel({
                   value={newRepoUrl}
                   onChange={(event) => setNewRepoUrl(event.target.value)}
                   placeholder="https://github.com/usuario/repositorio"
-                  className="flex-1 rounded-lg border border-neutral-300 px-3 py-1.5 text-sm outline-none focus:border-emerald-600 focus:ring-1 focus:ring-emerald-600 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-100 dark:focus:border-emerald-500 dark:focus:ring-emerald-500"
+                  className="flex-1 rounded-lg border border-neutral-300 px-3 py-1.5 text-sm outline-none focus:border-emerald-600 focus:ring-1 focus:ring-emerald-600 dark:border-neutral-700 dark:bg-[#161b22] dark:text-neutral-100 dark:focus:border-emerald-500 dark:focus:ring-emerald-500"
                 />
                 <button
                   type="submit"

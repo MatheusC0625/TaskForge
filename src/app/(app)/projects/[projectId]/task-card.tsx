@@ -19,7 +19,7 @@ export function TaskCard({ task, onOpen }: { task: TaskCardData; onOpen: () => v
     <button
       type="button"
       onClick={onOpen}
-      className="flex w-full flex-col gap-2 rounded-lg border border-neutral-200 bg-white p-3 text-left transition hover:-translate-y-0.5 hover:border-neutral-300 hover:shadow-sm dark:border-neutral-800 dark:bg-neutral-900 dark:hover:border-neutral-700"
+      className="flex w-full flex-col gap-2 rounded-lg border border-neutral-200 bg-[#f6f8fa] p-3 text-left transition hover:-translate-y-0.5 hover:border-neutral-300 hover:shadow-sm dark:border-neutral-800 dark:bg-[#161b22] dark:hover:border-neutral-700"
     >
       <p className="text-sm font-medium text-neutral-900 dark:text-neutral-100">{task.title}</p>
 

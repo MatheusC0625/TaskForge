@@ -6,7 +6,7 @@ export default function ProjectLoading() {
         {Array.from({ length: 3 }).map((_, index) => (
           <div
             key={index}
-            className="h-12 animate-pulse rounded-lg border border-neutral-200 bg-neutral-50 dark:border-neutral-800 dark:bg-neutral-900"
+            className="h-12 animate-pulse rounded-lg border border-neutral-200 bg-neutral-50 dark:border-neutral-800 dark:bg-[#161b22]"
           />
         ))}
       </div>

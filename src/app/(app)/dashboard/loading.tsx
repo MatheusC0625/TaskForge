@@ -6,7 +6,7 @@ export default function DashboardLoading() {
         {Array.from({ length: 4 }).map((_, index) => (
           <div
             key={index}
-            className="h-20 animate-pulse rounded-xl border border-neutral-200 bg-neutral-50 dark:border-neutral-800 dark:bg-neutral-900"
+            className="h-20 animate-pulse rounded-xl border border-neutral-200 bg-neutral-50 dark:border-neutral-800 dark:bg-[#161b22]"
           />
         ))}
       </div>

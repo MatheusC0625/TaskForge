@@ -241,7 +241,7 @@ export function Board({
             <TaskCard task={toCardData(activeTask)} onOpen={() => {}} />
           </div>
         ) : activeColumnId ? (
-          <div className="w-72 rotate-1 rounded-xl border border-neutral-200 bg-white p-3 opacity-90 shadow-lg sm:w-80 dark:border-neutral-800 dark:bg-neutral-900">
+          <div className="w-72 rotate-1 rounded-xl border border-neutral-200 bg-[#f6f8fa] p-3 opacity-90 shadow-lg sm:w-80 dark:border-neutral-800 dark:bg-[#161b22]">
             <span className="text-sm font-medium text-neutral-900 dark:text-neutral-100">
               {optimisticColumns.find((column) => column.id === activeColumnId)?.name}
             </span>
