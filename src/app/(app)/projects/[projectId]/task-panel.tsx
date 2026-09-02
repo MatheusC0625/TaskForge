@@ -63,7 +63,7 @@ export function TaskPanel({
         onClick={onClose}
         aria-hidden="true"
       />
-      <div className="slide-panel fixed inset-y-0 right-0 z-50 flex w-full max-w-md flex-col overflow-y-auto border-l border-neutral-200 bg-white shadow-xl dark:border-neutral-800 dark:bg-neutral-900">
+      <div className="slide-panel fixed inset-y-0 right-0 z-50 flex w-full max-w-md flex-col overflow-y-auto border-l border-neutral-200 bg-[#f6f8fa] shadow-xl dark:border-neutral-800 dark:bg-[#161b22]">
         <div className="flex items-center justify-between border-b border-neutral-200 px-5 py-4 dark:border-neutral-800">
           <span className="text-xs font-medium tracking-wide text-neutral-400 uppercase dark:text-neutral-500">
             Tarefa
@@ -101,7 +101,7 @@ export function TaskPanel({
                 onChange={(event) =>
                   updateTask(task.id, { priority: event.target.value as Priority })
                 }
-                className="rounded-lg border border-neutral-300 px-3 py-2 text-sm outline-none focus:border-emerald-600 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-100 dark:focus:border-emerald-500"
+                className="rounded-lg border border-neutral-300 px-3 py-2 text-sm outline-none focus:border-emerald-600 dark:border-neutral-700 dark:bg-[#161b22] dark:text-neutral-100 dark:focus:border-emerald-500"
               >
                 {PRIORITY_ORDER.map((priority) => (
                   <option key={priority} value={priority}>
@@ -119,7 +119,7 @@ export function TaskPanel({
                 type="date"
                 defaultValue={toDateInputValue(task.dueDate)}
                 onChange={(event) => updateTask(task.id, { dueDate: event.target.value || null })}
-                className="rounded-lg border border-neutral-300 px-3 py-2 text-sm outline-none focus:border-emerald-600 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-100 dark:[color-scheme:dark] dark:focus:border-emerald-500"
+                className="rounded-lg border border-neutral-300 px-3 py-2 text-sm outline-none focus:border-emerald-600 dark:border-neutral-700 dark:bg-[#161b22] dark:text-neutral-100 dark:[color-scheme:dark] dark:focus:border-emerald-500"
               />
             </div>
           </div>
@@ -138,7 +138,7 @@ export function TaskPanel({
               }}
               rows={4}
               placeholder="Adicione mais detalhes..."
-              className="resize-none rounded-lg border border-neutral-300 px-3 py-2 text-sm outline-none focus:border-emerald-600 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-100 dark:focus:border-emerald-500"
+              className="resize-none rounded-lg border border-neutral-300 px-3 py-2 text-sm outline-none focus:border-emerald-600 dark:border-neutral-700 dark:bg-[#161b22] dark:text-neutral-100 dark:focus:border-emerald-500"
             />
           </div>
 
@@ -254,7 +254,7 @@ function TagSection({
               placeholder="Nome da etiqueta"
               required
               maxLength={30}
-              className="flex-1 rounded-lg border border-neutral-300 px-3 py-1.5 text-sm outline-none focus:border-emerald-600 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-100 dark:focus:border-emerald-500"
+              className="flex-1 rounded-lg border border-neutral-300 px-3 py-1.5 text-sm outline-none focus:border-emerald-600 dark:border-neutral-700 dark:bg-[#161b22] dark:text-neutral-100 dark:focus:border-emerald-500"
             />
             <button
               type="submit"
@@ -381,7 +381,7 @@ function ChecklistSection({
           name="title"
           placeholder="Adicionar item..."
           maxLength={200}
-          className="flex-1 rounded-lg border border-neutral-300 px-3 py-1.5 text-sm outline-none focus:border-emerald-600 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-100 dark:focus:border-emerald-500"
+          className="flex-1 rounded-lg border border-neutral-300 px-3 py-1.5 text-sm outline-none focus:border-emerald-600 dark:border-neutral-700 dark:bg-[#161b22] dark:text-neutral-100 dark:focus:border-emerald-500"
         />
         <button
           type="submit"

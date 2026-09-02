@@ -50,7 +50,7 @@ export function NewTaskForm({ columnId }: { columnId: string }) {
               required
               maxLength={200}
               autoFocus
-              className="rounded-lg border border-neutral-300 px-3 py-2 text-sm outline-none focus:border-emerald-600 focus:ring-1 focus:ring-emerald-600 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-100 dark:focus:border-emerald-500 dark:focus:ring-emerald-500"
+              className="rounded-lg border border-neutral-300 px-3 py-2 text-sm outline-none focus:border-emerald-600 focus:ring-1 focus:ring-emerald-600 dark:border-neutral-700 dark:bg-[#161b22] dark:text-neutral-100 dark:focus:border-emerald-500 dark:focus:ring-emerald-500"
             />
           </div>
 
@@ -63,7 +63,7 @@ export function NewTaskForm({ columnId }: { columnId: string }) {
                 id={priorityId}
                 name="priority"
                 defaultValue="MEDIUM"
-                className="rounded-lg border border-neutral-300 px-3 py-2 text-sm outline-none focus:border-emerald-600 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-100 dark:focus:border-emerald-500"
+                className="rounded-lg border border-neutral-300 px-3 py-2 text-sm outline-none focus:border-emerald-600 dark:border-neutral-700 dark:bg-[#161b22] dark:text-neutral-100 dark:focus:border-emerald-500"
               >
                 {PRIORITY_ORDER.map((priority) => (
                   <option key={priority} value={priority}>
@@ -81,7 +81,7 @@ export function NewTaskForm({ columnId }: { columnId: string }) {
                 id={dueDateId}
                 name="dueDate"
                 type="date"
-                className="rounded-lg border border-neutral-300 px-3 py-2 text-sm outline-none focus:border-emerald-600 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-100 dark:[color-scheme:dark] dark:focus:border-emerald-500"
+                className="rounded-lg border border-neutral-300 px-3 py-2 text-sm outline-none focus:border-emerald-600 dark:border-neutral-700 dark:bg-[#161b22] dark:text-neutral-100 dark:[color-scheme:dark] dark:focus:border-emerald-500"
               />
             </div>
           </div>

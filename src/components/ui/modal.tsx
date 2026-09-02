@@ -29,7 +29,7 @@ export const Modal = forwardRef<ModalHandle, ModalProps>(function Modal(
       onClick={(event) => {
         if (event.target === dialogRef.current) dialogRef.current?.close();
       }}
-      className="w-[calc(100%-2rem)] max-w-md rounded-xl border border-neutral-200 bg-white p-0 shadow-xl backdrop:bg-black/40 dark:border-neutral-800 dark:bg-neutral-900"
+      className="w-[calc(100%-2rem)] max-w-md rounded-xl border border-neutral-200 bg-[#f6f8fa] p-0 shadow-xl backdrop:bg-black/40 dark:border-neutral-800 dark:bg-[#161b22]"
     >
       <div className="max-h-[85vh] overflow-y-auto p-6">
         <h2 className="mb-4 text-lg font-semibold text-neutral-900 dark:text-neutral-100">

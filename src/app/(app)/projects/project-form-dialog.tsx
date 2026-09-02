@@ -82,7 +82,7 @@ export const ProjectFormDialog = forwardRef<ModalHandle, ProjectFormDialogProps>
               type="text"
               required
               maxLength={80}
-              className="rounded-lg border border-neutral-300 px-3 py-2 text-sm outline-none focus:border-emerald-600 focus:ring-1 focus:ring-emerald-600 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-100 dark:focus:border-emerald-500 dark:focus:ring-emerald-500"
+              className="rounded-lg border border-neutral-300 px-3 py-2 text-sm outline-none focus:border-emerald-600 focus:ring-1 focus:ring-emerald-600 dark:border-neutral-700 dark:bg-[#161b22] dark:text-neutral-100 dark:focus:border-emerald-500 dark:focus:ring-emerald-500"
             />
           </div>
 
@@ -95,7 +95,7 @@ export const ProjectFormDialog = forwardRef<ModalHandle, ProjectFormDialogProps>
               name="description"
               rows={3}
               maxLength={500}
-              className="resize-none rounded-lg border border-neutral-300 px-3 py-2 text-sm outline-none focus:border-emerald-600 focus:ring-1 focus:ring-emerald-600 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-100 dark:focus:border-emerald-500 dark:focus:ring-emerald-500"
+              className="resize-none rounded-lg border border-neutral-300 px-3 py-2 text-sm outline-none focus:border-emerald-600 focus:ring-1 focus:ring-emerald-600 dark:border-neutral-700 dark:bg-[#161b22] dark:text-neutral-100 dark:focus:border-emerald-500 dark:focus:ring-emerald-500"
             />
           </div>
 
@@ -130,7 +130,7 @@ export const ProjectFormDialog = forwardRef<ModalHandle, ProjectFormDialogProps>
               name="githubRepoUrl"
               type="url"
               placeholder="https://github.com/usuario/repositorio"
-              className="rounded-lg border border-neutral-300 px-3 py-2 text-sm outline-none focus:border-emerald-600 focus:ring-1 focus:ring-emerald-600 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-100 dark:focus:border-emerald-500 dark:focus:ring-emerald-500"
+              className="rounded-lg border border-neutral-300 px-3 py-2 text-sm outline-none focus:border-emerald-600 focus:ring-1 focus:ring-emerald-600 dark:border-neutral-700 dark:bg-[#161b22] dark:text-neutral-100 dark:focus:border-emerald-500 dark:focus:ring-emerald-500"
             />
             <p className="text-xs text-neutral-400 dark:text-neutral-500">
               Vincule um repositório público para exibir um selo com nome, linguagem e estrelas no projeto.

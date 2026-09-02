@@ -64,7 +64,7 @@ export function ColumnItem({ column, taskCount, dragHandle }: ColumnItemProps) {
               if (event.key === "Enter") event.currentTarget.blur();
             }}
             maxLength={40}
-            className="min-w-0 flex-1 rounded-md border border-transparent px-1 text-sm font-medium text-neutral-900 outline-none focus:border-neutral-300 focus:bg-white dark:text-neutral-100 dark:focus:border-neutral-700 dark:focus:bg-neutral-800"
+            className="min-w-0 flex-1 rounded-md border border-transparent px-1 text-sm font-medium text-neutral-900 outline-none focus:border-neutral-300 focus:bg-[#f6f8fa] dark:text-neutral-100 dark:focus:border-neutral-700 dark:focus:bg-neutral-800"
           />
           <span className="shrink-0 text-xs text-neutral-400 dark:text-neutral-500">{taskCount}</span>
         </div>
@@ -82,7 +82,7 @@ export function ColumnItem({ column, taskCount, dragHandle }: ColumnItemProps) {
           {isMenuOpen && (
             <>
               <div className="fixed inset-0 z-10" onClick={() => setIsMenuOpen(false)} aria-hidden="true" />
-              <div className="absolute right-0 z-20 mt-1 w-44 rounded-lg border border-neutral-200 bg-white py-1 shadow-lg dark:border-neutral-800 dark:bg-neutral-900">
+              <div className="absolute right-0 z-20 mt-1 w-44 rounded-lg border border-neutral-200 bg-[#f6f8fa] py-1 shadow-lg dark:border-neutral-800 dark:bg-[#161b22]">
                 <button
                   type="button"
                   onClick={() => {
