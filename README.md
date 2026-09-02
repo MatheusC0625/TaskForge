@@ -55,7 +55,49 @@ Gerenciador de tarefas estilo Kanban — full stack, com autenticação, banco d
 - **A coluna é o status da tarefa.** Em vez de um campo `status` separado (que poderia ficar dessincronizado da coluna), a posição da tarefa no Kanban é a única fonte da verdade. O mesmo critério é reaproveitado no dashboard: uma tarefa conta como concluída quando está na última coluna do projeto.
 - **Server Actions em vez de uma API REST separada.** Todas as mutações (criar projeto, mover tarefa, etc.) são Server Actions do Next.js — menos código de "cola" do que manter rotas de API à parte, com verificação de propriedade (ownership) em cada uma delas.
 - **Atualização otimista onde importa.** Mover uma tarefa no Kanban e marcar um item do checklist respondem instantaneamente na tela (via `useOptimistic`), sem esperar a confirmação do servidor — mas o cálculo da posição real da tarefa sempre usa a lista completa (não filtrada), então buscar/filtrar nunca corrompe a ordenação por trás.
-- **Autenticação sem tabelas extras.** Como o login é só por e-mail/senha (sem OAuth), a sessão usa JWT em vez do adapter de banco do NextAuth — dispensa as tabelas `Account`/`Session`/`VerificationToken`.
+- **Autenticação sem tabelas extras.** A sessão usa a estratégia JWT do NextAuth (em vez do adapter de banco), tanto para login por e-mail/senha quanto para OAuth — dispensa as tabelas `Account`/`Session`/`VerificationToken`.
+
+## Arquitetura
+
+```mermaid
+flowchart TB
+    Browser["Navegador — Kanban, Dashboard, Templates"]
+
+    subgraph Vercel["Vercel"]
+        direction TB
+        subgraph Next["Next.js App Router"]
+            direction LR
+            SC["Server Components"]
+            SA["Server Actions<br/>(projetos, colunas, tarefas...)"]
+            RH["Route Handlers<br/>(/api/register, /api/auth)"]
+        end
+        AuthJS["Auth.js<br/>Credentials (JWT) + OAuth"]
+    end
+
+    Prisma["Prisma ORM"]
+    DB[("Neon PostgreSQL")]
+    Resend["Resend<br/>(e-mail transacional)"]
+    GitHubAPI["API REST do GitHub<br/>(metadados de repo + status de CI)"]
+
+    Browser -->|RSC / streaming| SC
+    Browser -->|mutações| SA
+    Browser -->|cadastro / callback OAuth| RH
+
+    RH --> AuthJS
+    SA --> AuthJS
+    AuthJS --> Prisma
+    SC --> Prisma
+    SA --> Prisma
+    Prisma --> DB
+
+    RH -->|redefinição de senha| Resend
+    SC -->|selo de linguagem / CI do repo vinculado| GitHubAPI
+```
+
+Fluxo de deploy próprio do projeto (não confundir com a integração acima, que é a
+*feature* de mostrar o status de CI de um repositório vinculado a um projeto): cada push
+na branch principal roda lint, typecheck e testes (Vitest + Playwright) via **GitHub
+Actions**, e a Vercel faz o build e o deploy automaticamente quando o CI passa.
 
 ## Rodando localmente
 
