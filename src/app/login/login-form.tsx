@@ -43,6 +43,8 @@ export function LoginForm({
     if (result?.error) {
       if (result.code === "account_locked") {
         setError("Muitas tentativas incorretas. Tente novamente em 15 minutos.");
+      } else if (result.code === "rate_limited") {
+        setError("Muitas tentativas de login. Tente novamente em alguns instantes.");
       } else {
         setError("E-mail ou senha incorretos.");
       }

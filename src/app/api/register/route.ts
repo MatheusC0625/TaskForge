@@ -3,8 +3,18 @@ import bcrypt from "bcryptjs";
 
 import { prisma } from "@/lib/prisma";
 import { registerSchema } from "@/lib/validations/auth";
+import { checkRateLimit, getClientIp } from "@/lib/rate-limit";
 
 export async function POST(request: Request) {
+  const ip = getClientIp(request.headers);
+  const { success } = await checkRateLimit("register", ip);
+  if (!success) {
+    return NextResponse.json(
+      { error: "Muitas tentativas. Tente novamente em alguns minutos." },
+      { status: 429 },
+    );
+  }
+
   const body = await request.json();
   const parsed = registerSchema.safeParse(body);
 

@@ -48,7 +48,8 @@ Gerenciador de tarefas estilo Kanban — full stack, com autenticação, banco d
 - [Zod](https://zod.dev) — validação de formulários e Server Actions
 - [Resend](https://resend.com) — e-mail transacional (redefinição de senha)
 - API REST do GitHub — metadados de repositório e status de CI/CD (GitHub Actions)
-- [Sentry](https://sentry.io) — monitoramento de erros do navegador (ver decisão técnica abaixo sobre o SDK de servidor)
+- [Sentry](https://sentry.io) — monitoramento de erros (navegador e servidor)
+- [Upstash Redis](https://upstash.com) — rate limiting de `/api/register`, login e redefinição de senha
 - [Vercel](https://vercel.com) — deploy e CI/CD do próprio projeto
 
 ## Algumas decisões técnicas
@@ -57,7 +58,7 @@ Gerenciador de tarefas estilo Kanban — full stack, com autenticação, banco d
 - **Server Actions em vez de uma API REST separada.** Todas as mutações (criar projeto, mover tarefa, etc.) são Server Actions do Next.js — menos código de "cola" do que manter rotas de API à parte, com verificação de propriedade (ownership) em cada uma delas.
 - **Atualização otimista onde importa.** Mover uma tarefa no Kanban e marcar um item do checklist respondem instantaneamente na tela (via `useOptimistic`), sem esperar a confirmação do servidor — mas o cálculo da posição real da tarefa sempre usa a lista completa (não filtrada), então buscar/filtrar nunca corrompe a ordenação por trás.
 - **Autenticação sem tabelas extras.** A sessão usa a estratégia JWT do NextAuth (em vez do adapter de banco), tanto para login por e-mail/senha quanto para OAuth — dispensa as tabelas `Account`/`Session`/`VerificationToken`.
-- **Sentry só no navegador, não no servidor.** Testei o SDK de servidor (`instrumentation.ts` + `@sentry/nextjs`) e, via bisecção com a suíte e2e, confirmei que a instrumentação automática de HTTP/fetch do Node corrompe o streaming SSR quando uma página busca dados de uma API externa em paralelo (o selo de repositório do GitHub) — um teste passou a falhar de forma consistente e determinística assim que o `Sentry.init()` do servidor entrava em ação, e voltou a passar 100% das vezes assim que ele saía. Reproduzido e descartado com `Sentry.init` chamado diretamente (sem o wrapper `withSentryConfig`) e também com as integrações `Http`/`NodeFetch` desativadas manualmente — o problema persistiu nos dois casos, o que aponta pra uma incompatibilidade mais profunda entre o SDK Node/OpenTelemetry do Sentry e o Turbopack desta versão do Next.js. Optei por manter só a captura de erros do navegador (`instrumentation-client.ts`), que cobre exceções de JavaScript/render no cliente sem esse efeito colateral.
+- **Rate limiting é best-effort, não uma trava de banco.** `checkRateLimit` roda antes das operações custosas (bcrypt, escrita no banco, envio de e-mail) mas não é atômico com elas — sob concorrência real, é aceitável passar 1-2 requisições a mais do limite configurado. Sem o Upstash configurado, os limiters ficam `null` e a checagem sempre libera, então o app funciona igual sem a variável de ambiente.
 
 ## Arquitetura
 

@@ -7,6 +7,7 @@ import bcrypt from "bcryptjs";
 import { prisma } from "@/lib/prisma";
 import { loginSchema } from "@/lib/validations/auth";
 import { authConfig } from "@/auth.config";
+import { checkRateLimit, getClientIp } from "@/lib/rate-limit";
 
 const MAX_LOGIN_ATTEMPTS = 5;
 const LOCK_DURATION_MS = 15 * 60 * 1000;
@@ -14,6 +15,10 @@ const OAUTH_PROVIDERS = new Set(["github", "google"]);
 
 export class AccountLockedError extends CredentialsSignin {
   code = "account_locked";
+}
+
+export class RateLimitedError extends CredentialsSignin {
+  code = "rate_limited";
 }
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
@@ -25,9 +30,13 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         email: {},
         password: {},
       },
-      authorize: async (credentials) => {
+      authorize: async (credentials, request) => {
         const parsed = loginSchema.safeParse(credentials);
         if (!parsed.success) return null;
+
+        const ip = getClientIp(request.headers);
+        const { success } = await checkRateLimit("login", ip);
+        if (!success) throw new RateLimitedError();
 
         const { email, password } = parsed.data;
 
