@@ -28,6 +28,11 @@ test.describe("plano Free/Pro", () => {
     await expect(page.getByText("Voltar para o plano Free")).toBeVisible();
 
     await page.goto(projectUrl);
+    // Essa página busca dados ao vivo da API do GitHub para o selo do
+    // repositório; sem esperar a rede estabilizar, o clique pode acontecer
+    // durante o streaming SSR e pegar o cabeçalho em um estado intermediário
+    // (dois elementos "Editar projeto" momentaneamente no DOM).
+    await page.waitForLoadState("networkidle");
     await page.locator('button:has-text("Editar projeto")').click();
     await expect(page.getByText(/permite 1 repositório/i)).not.toBeVisible();
   });

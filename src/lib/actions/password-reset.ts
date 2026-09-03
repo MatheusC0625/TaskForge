@@ -2,11 +2,13 @@
 
 import crypto from "node:crypto";
 import bcrypt from "bcryptjs";
+import { headers } from "next/headers";
 
 import { prisma } from "@/lib/prisma";
 import { getResendClient, getAppUrl } from "@/lib/resend";
 import { forgotPasswordSchema, resetPasswordSchema } from "@/lib/validations/auth";
 import type { ActionState } from "@/lib/actions/projects";
+import { checkRateLimit, getClientIp } from "@/lib/rate-limit";
 
 const RESET_TOKEN_TTL_MS = 60 * 60 * 1000;
 
@@ -21,6 +23,12 @@ export async function requestPasswordReset(
   const parsed = forgotPasswordSchema.safeParse({ email: formData.get("email") });
   if (!parsed.success) {
     return { error: parsed.error.issues[0]?.message ?? "E-mail inválido." };
+  }
+
+  const ip = getClientIp(await headers());
+  const { success } = await checkRateLimit("password-reset", ip);
+  if (!success) {
+    return { error: "Muitas tentativas. Tente novamente em alguns minutos." };
   }
 
   const user = await prisma.user.findUnique({ where: { email: parsed.data.email } });
