@@ -1,0 +1,21 @@
+.soma-page {
+  --soma-ink: #142723;
+  --soma-ink-soft: #3f5652;
+  --soma-cream: #faf7f1;
+  --soma-cream-deep: #f2ead9;
+  --soma-primary-950: #0a2b27;
+  --soma-primary-900: #0e3733;
+  --soma-primary-800: #124a44;
+  --soma-primary-700: #17615a;
+  --soma-primary-600: #1c7a71;
+  --soma-primary-500: #229488;
+  --soma-primary-100: #e1efec;
+  --soma-gold-600: #a9793f;
+  --soma-gold-500: #c79a5b;
+  --soma-gold-400: #dab577;
+  --soma-gold-100: #f6ecd8;
+  --soma-line: #e4ddcd;
+
+  background: var(--soma-cream);
+  color: var(--soma-ink);
+}
