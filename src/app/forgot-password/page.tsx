@@ -21,6 +21,11 @@ export default function ForgotPasswordPage() {
           Informe seu e-mail e, se houver uma conta associada, enviaremos um link para redefinir
           sua senha.
         </p>
+        <p className="max-w-sm text-xs text-amber-600 dark:text-amber-500">
+          Este é um projeto de portfólio: o envio de e-mail roda em modo de teste e pode não
+          chegar para todo endereço. Se o link não chegar, é uma limitação do ambiente de demo,
+          não um bug do fluxo em si.
+        </p>
       </div>
 
       {submitted ? (
