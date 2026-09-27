@@ -30,7 +30,8 @@ contra a produção.
 | Open redirect no login via `callbackUrl` | Média | ✅ Corrigido |
 | Sem página 404 customizada | — (UX, não segurança) | ✅ Corrigido |
 | Enumeração de usuário em `/api/register` | Baixa | 📝 Documentado (aceito) |
-| Sem rate limiting em nenhuma rota | Baixa (sem usuários reais) | 📝 Documentado (roadmap) |
+| Força bruta de senha sem limite de tentativas | Média | ✅ Corrigido |
+| Rate limit por IP dependente de config externa opcional | Baixa | 📝 Documentado (aceito) |
 | Sem Content-Security-Policy completa | Baixa | 📝 Documentado (roadmap) |
 
 ### Headers de segurança ausentes + `X-Powered-By` exposto
@@ -71,16 +72,27 @@ saber que já tem conta com aquele e-mail para não tentar se cadastrar de novo 
 redefinição de senha, **não** sofre desse problema: já responde de forma genérica
 independentemente de o e-mail existir ou não, com token de uso único.
 
-### Sem rate limiting
+### Força bruta de senha sem limite de tentativas
 
-Não há nenhum mecanismo de rate limiting no projeto — `/api/register`, o login e a
-solicitação de redefinição de senha podem ser chamados sem limite (além do bloqueio de
-conta após tentativas de senha incorreta, que já existe).
+A tela de login aceitava qualquer número de tentativas de senha para a mesma conta, sem
+nenhum atraso ou bloqueio — abrindo espaço para um bot testar senhas em sequência.
 
-**Decisão**: documentado como roadmap, não corrigido agora. Como o app roda em funções
-serverless da Vercel (sem memória compartilhada entre instâncias), um rate limit correto
-exigiria um armazenamento externo (ex: Upstash Redis) — investimento que não se justifica
-para um projeto sem usuários reais.
+**Correção**: depois de 5 tentativas erradas seguidas, a conta é bloqueada por 15 minutos
+(`failedLoginAttempts`/`lockedUntil` em `User`, aplicado em `src/auth.ts`) — mesmo a senha
+correta é recusada enquanto o bloqueio está ativo. Não depende de nenhum serviço externo,
+funciona sempre.
+
+### Rate limit por IP dependente de config externa opcional
+
+Além do bloqueio de conta acima, `/api/register`, o login e a solicitação de redefinição
+de senha também passam por um rate limit por IP (`src/lib/rate-limit.ts`, via Upstash
+Redis — necessário porque o app roda em funções serverless da Vercel, sem memória
+compartilhada entre instâncias).
+
+**Decisão**: aceito como está. Sem as variáveis `UPSTASH_REDIS_REST_URL`/`UPSTASH_REDIS_REST_TOKEN`
+configuradas, esse limitador especificamente vira um no-op silencioso — mas o bloqueio de
+conta acima, que não depende de nada externo, já cobre o cenário que mais importa (bot
+tentando adivinhar a senha de uma conta específica).
 
 ### Sem Content-Security-Policy completa
 
