@@ -11,6 +11,8 @@ import { checkRateLimit, getClientIp } from "@/lib/rate-limit";
 
 const MAX_LOGIN_ATTEMPTS = 5;
 const LOCK_DURATION_MS = 15 * 60 * 1000;
+const IP_MAX_LOGIN_ATTEMPTS = 10;
+const IP_LOCK_DURATION_MS = 15 * 60 * 1000;
 const OAUTH_PROVIDERS = new Set(["github", "google"]);
 
 export class AccountLockedError extends CredentialsSignin {
@@ -19,6 +21,28 @@ export class AccountLockedError extends CredentialsSignin {
 
 export class RateLimitedError extends CredentialsSignin {
   code = "rate_limited";
+}
+
+/**
+ * Bloqueio por IP, independente de conta existir. O bloqueio por conta (abaixo)
+ * não protege o caso de um e-mail que não existe, já que não há linha de
+ * usuário nenhuma para gravar a tentativa. Ao contrário do rate limit por IP
+ * via Upstash em checkRateLimit, não depende de nenhum serviço externo.
+ */
+async function registerFailedIpAttempt(ip: string) {
+  const existing = await prisma.loginThrottle.findUnique({ where: { ip } });
+  const attempts = (existing?.failedAttempts ?? 0) + 1;
+  const isNowBlocked = attempts >= IP_MAX_LOGIN_ATTEMPTS;
+  const data = {
+    failedAttempts: isNowBlocked ? 0 : attempts,
+    blockedUntil: isNowBlocked ? new Date(Date.now() + IP_LOCK_DURATION_MS) : null,
+  };
+
+  await prisma.loginThrottle.upsert({
+    where: { ip },
+    create: { ip, ...data },
+    update: data,
+  });
 }
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
@@ -38,10 +62,18 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         const { success } = await checkRateLimit("login", ip);
         if (!success) throw new RateLimitedError();
 
+        const throttle = await prisma.loginThrottle.findUnique({ where: { ip } });
+        if (throttle?.blockedUntil && throttle.blockedUntil > new Date()) {
+          throw new RateLimitedError();
+        }
+
         const { email, password } = parsed.data;
 
         const user = await prisma.user.findUnique({ where: { email } });
-        if (!user) return null;
+        if (!user) {
+          await registerFailedIpAttempt(ip);
+          return null;
+        }
 
         if (user.lockedUntil && user.lockedUntil > new Date()) {
           throw new AccountLockedError();
@@ -61,6 +93,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
               ? { failedLoginAttempts: 0, lockedUntil: new Date(Date.now() + LOCK_DURATION_MS) }
               : { failedLoginAttempts: attempts },
           });
+          await registerFailedIpAttempt(ip);
 
           if (isNowLocked) throw new AccountLockedError();
           return null;
@@ -71,6 +104,9 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
             where: { id: user.id },
             data: { failedLoginAttempts: 0, lockedUntil: null },
           });
+        }
+        if (throttle) {
+          await prisma.loginThrottle.deleteMany({ where: { ip } });
         }
 
         return { id: user.id, name: user.name, email: user.email };

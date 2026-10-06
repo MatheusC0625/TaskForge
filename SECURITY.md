@@ -31,7 +31,8 @@ contra a produção.
 | Sem página 404 customizada | — (UX, não segurança) | ✅ Corrigido |
 | Enumeração de usuário em `/api/register` | Baixa | 📝 Documentado (aceito) |
 | Força bruta de senha sem limite de tentativas | Média | ✅ Corrigido |
-| Rate limit por IP dependente de config externa opcional | Baixa | 📝 Documentado (aceito) |
+| Força bruta contra e-mail que não existe (sem conta para bloquear) | Média | ✅ Corrigido |
+| Rate limit por IP via Upstash dependente de config externa opcional | Baixa | 📝 Documentado (aceito) |
 | Sem Content-Security-Policy completa | Baixa | 📝 Documentado (roadmap) |
 
 ### Headers de segurança ausentes + `X-Powered-By` exposto
@@ -82,17 +83,34 @@ nenhum atraso ou bloqueio — abrindo espaço para um bot testar senhas em sequ�
 correta é recusada enquanto o bloqueio está ativo. Não depende de nenhum serviço externo,
 funciona sempre.
 
-### Rate limit por IP dependente de config externa opcional
+### Força bruta contra e-mail que não existe
 
-Além do bloqueio de conta acima, `/api/register`, o login e a solicitação de redefinição
-de senha também passam por um rate limit por IP (`src/lib/rate-limit.ts`, via Upstash
-Redis — necessário porque o app roda em funções serverless da Vercel, sem memória
-compartilhada entre instâncias).
+O bloqueio de conta acima só funciona quando existe uma linha de usuário para gravar a
+tentativa (`User.failedLoginAttempts`/`lockedUntil`). Testando manualmente, percebemos que
+um e-mail que não existe no banco passa direto (`if (!user) return null`, sem registrar
+nada) — um bot podia martelar e-mails aleatórios sem limite nenhum, já que não há conta
+para travar.
+
+**Correção**: um bloqueio por IP gravado no Postgres (`LoginThrottle`, aplicado em
+`src/auth.ts`), independente de o e-mail existir ou não — depois de 10 tentativas
+malsucedidas seguidas do mesmo IP (combinando falhas contra e-mails inexistentes e senhas
+erradas; o contador zera a cada login bem-sucedido), esse IP fica bloqueado por 15 minutos.
+Ao contrário do rate limit via Upstash abaixo, não depende de nenhum serviço externo —
+funciona sempre, inclusive sem nenhuma variável de ambiente configurada.
+
+### Rate limit por IP via Upstash dependente de config externa opcional
+
+Além dos dois bloqueios acima, `/api/register`, o login e a solicitação de redefinição de
+senha também passam por um rate limit por IP via Upstash Redis (`src/lib/rate-limit.ts`
+— necessário para um limite realmente compartilhado entre instâncias, já que o app roda em
+funções serverless da Vercel, sem memória compartilhada; o `LoginThrottle` acima, por
+consulta direta ao Postgres, já cobre isso para o login especificamente, mas não para
+`/api/register`/redefinição de senha).
 
 **Decisão**: aceito como está. Sem as variáveis `UPSTASH_REDIS_REST_URL`/`UPSTASH_REDIS_REST_TOKEN`
-configuradas, esse limitador especificamente vira um no-op silencioso — mas o bloqueio de
-conta acima, que não depende de nada externo, já cobre o cenário que mais importa (bot
-tentando adivinhar a senha de uma conta específica).
+configuradas, esse limitador especificamente vira um no-op silencioso — mas os dois
+bloqueios de login acima, que não dependem de nada externo, já cobrem o cenário que mais
+importa (bot tentando adivinhar credenciais via login).
 
 ### Sem Content-Security-Policy completa
 
