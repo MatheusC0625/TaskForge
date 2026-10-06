@@ -51,6 +51,18 @@ model PasswordResetToken {
   @@index([userId])
 }
 
+// Bloqueio de login por IP, independente de conta existir ou não. Cobre o
+// caso que o bloqueio por conta (User.failedLoginAttempts/lockedUntil) não
+// cobre: tentativas contra um e-mail que não existe, onde não há linha de
+// usuário nenhuma para gravar a tentativa. Ao contrário do rate limit por
+// IP via Upstash (opcional), este não depende de nenhum serviço externo.
+model LoginThrottle {
+  ip             String    @id
+  failedAttempts Int       @default(0)
+  blockedUntil   DateTime?
+  updatedAt      DateTime  @updatedAt
+}
+
 model Project {
   id          String   @id @default(cuid())
   name        String
