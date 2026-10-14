@@ -56,15 +56,15 @@ export function LoginForm({
   };
 
   return (
-    <form onSubmit={handleSubmit} className="flex w-full max-w-sm flex-col gap-4">
+    <form onSubmit={handleSubmit} className="flex w-full max-w-sm flex-col gap-3">
       <OAuthButtons
         github={oauthProviders.github}
         google={oauthProviders.google}
         callbackUrl={callbackUrl}
       />
 
-      <div className="flex flex-col gap-1.5">
-        <label htmlFor="email" className="text-sm font-medium text-neutral-700 dark:text-neutral-300">
+      <div>
+        <label htmlFor="email" className="sr-only">
           E-mail
         </label>
         <input
@@ -73,17 +73,15 @@ export function LoginForm({
           type="email"
           autoComplete="email"
           required
+          placeholder="E-mail"
           value={email}
           onChange={(event) => setEmail(event.target.value)}
-          className="rounded-lg border border-neutral-300 px-3 py-2 text-sm outline-none focus:border-emerald-600 focus:ring-1 focus:ring-emerald-600 dark:border-neutral-700 dark:bg-[#161b22] dark:text-neutral-100 dark:focus:border-emerald-500 dark:focus:ring-emerald-500"
+          className={fieldClass}
         />
       </div>
 
       <div className="flex flex-col gap-1.5">
-        <div className="flex items-center justify-between">
-          <label htmlFor="password" className="text-sm font-medium text-neutral-700 dark:text-neutral-300">
-            Senha
-          </label>
+        <div className="flex items-center justify-end">
           <Link
             href="/forgot-password"
             className="text-xs font-medium text-neutral-500 hover:underline dark:text-neutral-400"
@@ -91,14 +89,18 @@ export function LoginForm({
             Esqueci minha senha
           </Link>
         </div>
+        <label htmlFor="password" className="sr-only">
+          Senha
+        </label>
         <PasswordInput
           id="password"
           name="password"
           autoComplete="current-password"
           required
+          placeholder="Senha"
           value={password}
           onChange={(event) => setPassword(event.target.value)}
-          className="rounded-lg border border-neutral-300 px-3 py-2 text-sm outline-none focus:border-emerald-600 focus:ring-1 focus:ring-emerald-600 dark:border-neutral-700 dark:bg-[#161b22] dark:text-neutral-100 dark:focus:border-emerald-500 dark:focus:ring-emerald-500"
+          className={fieldClass}
         />
       </div>
 
@@ -107,7 +109,7 @@ export function LoginForm({
       <button
         type="submit"
         disabled={isSubmitting}
-        className="mt-2 rounded-lg bg-emerald-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-emerald-700 active:scale-[0.98] disabled:opacity-60 dark:bg-emerald-500 dark:hover:bg-emerald-600"
+        className="mt-2 rounded-lg bg-emerald-600 px-4 py-2.5 text-sm font-medium text-white transition hover:bg-emerald-700 active:scale-[0.98] disabled:opacity-60 dark:bg-emerald-500 dark:hover:bg-emerald-600"
       >
         {isSubmitting ? "Entrando..." : "Entrar"}
       </button>
@@ -124,3 +126,6 @@ export function LoginForm({
     </form>
   );
 }
+
+const fieldClass =
+  "w-full rounded-lg border border-neutral-300 bg-white px-3.5 py-2.5 text-sm text-neutral-900 outline-none placeholder:text-neutral-400 focus:border-emerald-600 focus:ring-1 focus:ring-emerald-600 dark:border-neutral-800 dark:bg-[#111214] dark:text-neutral-100 dark:placeholder:text-neutral-500 dark:focus:border-emerald-500 dark:focus:ring-emerald-500";
