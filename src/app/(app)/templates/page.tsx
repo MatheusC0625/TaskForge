@@ -1,6 +1,5 @@
-import Link from "next/link";
 import { PROJECT_TEMPLATES } from "@/lib/templates";
-import { TemplatePreview } from "@/components/template-preview";
+import { TemplateCard } from "./template-card";
 
 export default function TemplatesPage() {
   return (
@@ -13,27 +12,8 @@ export default function TemplatesPage() {
       </div>
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-        {PROJECT_TEMPLATES.map((template) => (
-          <Link
-            key={template.id}
-            href={`/templates/${template.id}`}
-            className="flex flex-col gap-3 rounded-xl border border-neutral-200 p-4 transition hover:border-neutral-300 hover:shadow-sm dark:border-neutral-800 dark:hover:border-neutral-700"
-          >
-            <div className="flex items-start justify-between gap-2">
-              <div>
-                <h3 className="font-semibold text-neutral-900 dark:text-neutral-100">{template.name}</h3>
-                <p className="text-sm text-neutral-500 dark:text-neutral-400">{template.description}</p>
-              </div>
-              {template.pro && (
-                <span className="shrink-0 rounded-full bg-emerald-600 px-2 py-0.5 text-[11px] font-medium text-white dark:bg-emerald-500">
-                  Pro
-                </span>
-              )}
-            </div>
-            <div className="overflow-x-auto">
-              <TemplatePreview template={template} compact />
-            </div>
-          </Link>
+        {PROJECT_TEMPLATES.map((template, index) => (
+          <TemplateCard key={template.id} template={template} index={index} />
         ))}
       </div>
     </div>
