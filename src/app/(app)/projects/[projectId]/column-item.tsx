@@ -4,6 +4,7 @@ import { useRef, useState, useTransition } from "react";
 import type { DraggableAttributes, DraggableSyntheticListeners } from "@dnd-kit/core";
 import type { ModalHandle } from "@/components/ui/modal";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
+import { Badge } from "@/components/ui/badge";
 import { deleteColumn, renameColumn } from "@/lib/actions/columns";
 
 type ColumnItemProps = {
@@ -66,7 +67,9 @@ export function ColumnItem({ column, taskCount, dragHandle }: ColumnItemProps) {
             maxLength={40}
             className="min-w-0 flex-1 rounded-md border border-transparent px-1 text-sm font-medium text-neutral-900 outline-none focus:border-neutral-300 focus:bg-[#f6f8fa] dark:text-neutral-100 dark:focus:border-neutral-700 dark:focus:bg-neutral-800"
           />
-          <span className="shrink-0 text-xs text-neutral-400 dark:text-neutral-500">{taskCount}</span>
+          <Badge variant="secondary" className="shrink-0">
+            {taskCount}
+          </Badge>
         </div>
 
         <div className="relative shrink-0">

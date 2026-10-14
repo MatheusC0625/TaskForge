@@ -1,6 +1,7 @@
 "use client";
 
 import { useId, useRef, useState, useTransition } from "react";
+import { Plus } from "lucide-react";
 import { Modal, type ModalHandle } from "@/components/ui/modal";
 import { PRIORITY_LABELS, PRIORITY_ORDER } from "@/lib/priority";
 import { createTask } from "@/lib/actions/tasks";
@@ -32,9 +33,10 @@ export function NewTaskForm({ columnId }: { columnId: string }) {
       <button
         type="button"
         onClick={() => modalRef.current?.open()}
-        className="rounded-lg px-2 py-1.5 text-left text-sm text-neutral-500 transition hover:bg-neutral-100 dark:text-neutral-400 dark:hover:bg-neutral-800"
+        className="flex items-center gap-1.5 rounded-lg px-2 py-1.5 text-left text-sm text-neutral-500 transition hover:bg-neutral-100 dark:text-neutral-400 dark:hover:bg-neutral-800"
       >
-        + Adicionar tarefa
+        <Plus className="h-4 w-4" strokeWidth={1.75} />
+        Adicionar tarefa
       </button>
 
       <Modal ref={modalRef} title="Nova tarefa">

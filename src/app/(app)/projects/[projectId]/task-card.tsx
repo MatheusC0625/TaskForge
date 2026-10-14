@@ -1,5 +1,6 @@
 "use client";
 
+import { ListChecks, CalendarClock } from "lucide-react";
 import { PriorityBadge } from "@/components/ui/priority-badge";
 import { formatDueDate, isOverdue } from "@/lib/date";
 import type { Priority } from "@/generated/prisma/enums";
@@ -41,14 +42,20 @@ export function TaskCard({ task, onOpen }: { task: TaskCardData; onOpen: () => v
         <PriorityBadge priority={task.priority} />
         <div className="flex items-center gap-2 text-xs text-neutral-500 dark:text-neutral-400">
           {task.subtaskTotal > 0 && (
-            <span>
+            <span className="flex items-center gap-1">
+              <ListChecks className="h-3.5 w-3.5" strokeWidth={1.75} />
               {task.subtaskDone}/{task.subtaskTotal}
             </span>
           )}
           {task.dueDate && (
             <span
-              className={isOverdue(task.dueDate) ? "font-medium text-red-600 dark:text-red-400" : ""}
+              className={
+                isOverdue(task.dueDate)
+                  ? "flex items-center gap-1 font-medium text-red-600 dark:text-red-400"
+                  : "flex items-center gap-1"
+              }
             >
+              <CalendarClock className="h-3.5 w-3.5" strokeWidth={1.75} />
               {formatDueDate(task.dueDate)}
             </span>
           )}

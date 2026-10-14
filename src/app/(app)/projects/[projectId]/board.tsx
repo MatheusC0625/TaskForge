@@ -12,6 +12,8 @@ import {
   type DragStartEvent,
 } from "@dnd-kit/core";
 import { SortableContext, arrayMove, horizontalListSortingStrategy, verticalListSortingStrategy } from "@dnd-kit/sortable";
+import { Columns3 } from "lucide-react";
+import { EmptyState } from "@/components/ui/empty-state";
 import { ColumnItem } from "./column-item";
 import { SortableColumn } from "./sortable-column";
 import { NewColumnForm } from "./new-column-form";
@@ -171,17 +173,16 @@ export function Board({
       onDragEnd={handleDragEnd}
     >
       {optimisticColumns.length === 0 ? (
-        <div className="flex flex-col items-center gap-4 rounded-xl border border-dashed border-neutral-300 py-16 text-center dark:border-neutral-700">
-          <div>
-            <p className="text-neutral-900 dark:text-neutral-100">Este quadro ainda não tem colunas.</p>
-            <p className="mt-1 text-sm text-neutral-500 dark:text-neutral-400">
-              Crie a primeira coluna para começar a organizar as tarefas.
-            </p>
-          </div>
-          <div className="w-full max-w-xs">
-            <NewColumnForm projectId={projectId} />
-          </div>
-        </div>
+        <EmptyState
+          icon={Columns3}
+          title="Este quadro ainda não tem colunas."
+          description="Crie a primeira coluna para começar a organizar as tarefas."
+          action={
+            <div className="w-full max-w-xs">
+              <NewColumnForm projectId={projectId} />
+            </div>
+          }
+        />
       ) : (
       <div className="flex gap-4 overflow-x-auto pb-4">
         <SortableContext
