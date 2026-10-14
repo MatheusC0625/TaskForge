@@ -3,6 +3,7 @@
 import { useActionState, useEffect, useOptimistic, useRef, useState, useTransition } from "react";
 import type { ModalHandle } from "@/components/ui/modal";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
+import { Progress } from "@/components/ui/progress";
 import { PRIORITY_LABELS, PRIORITY_ORDER } from "@/lib/priority";
 import type { Priority } from "@/generated/prisma/enums";
 import { updateTask, deleteTask } from "@/lib/actions/tasks";
@@ -338,14 +339,7 @@ function ChecklistSection({
         )}
       </div>
 
-      {totalCount > 0 && (
-        <div className="h-1.5 w-full rounded-full bg-neutral-100 dark:bg-neutral-800">
-          <div
-            className="h-1.5 rounded-full bg-emerald-600 transition-all dark:bg-emerald-500"
-            style={{ width: `${progress}%` }}
-          />
-        </div>
-      )}
+      {totalCount > 0 && <Progress value={progress} className="h-1.5" />}
 
       <div className="flex flex-col gap-1">
         {optimisticSubtasks.map((subtask) => (

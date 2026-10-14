@@ -1,6 +1,7 @@
 "use client";
 
 import { useActionState, useEffect, useRef } from "react";
+import { Plus } from "lucide-react";
 import { createColumn } from "@/lib/actions/columns";
 import type { ActionState } from "@/lib/actions/projects";
 
@@ -34,8 +35,9 @@ export function NewColumnForm({ projectId }: { projectId: string }) {
       <button
         type="submit"
         disabled={isPending}
-        className="rounded-lg border border-neutral-300 px-4 py-2 text-sm font-medium text-neutral-700 transition hover:bg-neutral-100 active:scale-[0.98] disabled:opacity-60 dark:border-neutral-700 dark:text-neutral-300 dark:hover:bg-neutral-800"
+        className="flex items-center justify-center gap-1.5 rounded-lg border border-neutral-300 px-4 py-2 text-sm font-medium text-neutral-700 transition hover:bg-neutral-100 active:scale-[0.98] disabled:opacity-60 dark:border-neutral-700 dark:text-neutral-300 dark:hover:bg-neutral-800"
       >
+        <Plus className="h-4 w-4" strokeWidth={1.75} />
         {isPending ? "Adicionando..." : "Adicionar coluna"}
       </button>
       {state.error && <p className="text-sm text-red-600 dark:text-red-400">{state.error}</p>}
