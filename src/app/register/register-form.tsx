@@ -4,8 +4,10 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { signIn } from "next-auth/react";
+import { motion } from "motion/react";
 import { PasswordInput } from "@/components/ui/password-input";
 import { OAuthButtons } from "@/components/oauth-buttons";
+import { staggerContainer, fadeUpItem } from "@/lib/motion-variants";
 
 export function RegisterForm({
   oauthProviders,
@@ -63,10 +65,16 @@ export function RegisterForm({
   };
 
   return (
-    <form onSubmit={handleSubmit} className="flex w-full max-w-sm flex-col gap-3">
-      <OAuthButtons github={oauthProviders.github} google={oauthProviders.google} />
+    <motion.form
+      onSubmit={handleSubmit}
+      variants={staggerContainer}
+      className="flex w-full max-w-sm flex-col gap-3"
+    >
+      <motion.div variants={fadeUpItem}>
+        <OAuthButtons github={oauthProviders.github} google={oauthProviders.google} />
+      </motion.div>
 
-      <div>
+      <motion.div variants={fadeUpItem}>
         <label htmlFor="name" className="sr-only">
           Nome
         </label>
@@ -81,9 +89,9 @@ export function RegisterForm({
           onChange={(event) => setName(event.target.value)}
           className={fieldClass}
         />
-      </div>
+      </motion.div>
 
-      <div>
+      <motion.div variants={fadeUpItem}>
         <label htmlFor="email" className="sr-only">
           E-mail
         </label>
@@ -98,9 +106,9 @@ export function RegisterForm({
           onChange={(event) => setEmail(event.target.value)}
           className={fieldClass}
         />
-      </div>
+      </motion.div>
 
-      <div>
+      <motion.div variants={fadeUpItem}>
         <label htmlFor="password" className="sr-only">
           Senha
         </label>
@@ -115,9 +123,9 @@ export function RegisterForm({
           onChange={(event) => setPassword(event.target.value)}
           className={fieldClass}
         />
-      </div>
+      </motion.div>
 
-      <div>
+      <motion.div variants={fadeUpItem}>
         <label htmlFor="confirmPassword" className="sr-only">
           Confirmar senha
         </label>
@@ -132,19 +140,23 @@ export function RegisterForm({
           onChange={(event) => setConfirmPassword(event.target.value)}
           className={fieldClass}
         />
-      </div>
+      </motion.div>
 
       {error && <p className="text-sm text-red-600 dark:text-red-400">{error}</p>}
 
-      <button
+      <motion.button
+        variants={fadeUpItem}
         type="submit"
         disabled={isSubmitting}
         className="mt-2 rounded-lg bg-emerald-600 px-4 py-2.5 text-sm font-medium text-white transition hover:bg-emerald-700 active:scale-[0.98] disabled:opacity-60 dark:bg-emerald-500 dark:hover:bg-emerald-600"
       >
         {isSubmitting ? "Criando conta..." : "Criar conta"}
-      </button>
+      </motion.button>
 
-      <p className="text-center text-sm text-neutral-500 dark:text-neutral-400">
+      <motion.p
+        variants={fadeUpItem}
+        className="text-center text-sm text-neutral-500 dark:text-neutral-400"
+      >
         Já tem uma conta?{" "}
         <Link
           href="/login"
@@ -152,8 +164,8 @@ export function RegisterForm({
         >
           Entrar
         </Link>
-      </p>
-    </form>
+      </motion.p>
+    </motion.form>
   );
 }
 

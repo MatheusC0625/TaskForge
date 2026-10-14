@@ -11,6 +11,10 @@ const securityHeaders = [
 
 const nextConfig: NextConfig = {
   poweredByHeader: false,
+  // Evita que o `next dev`/`next build` regenere automaticamente um bloco de
+  // instruções em AGENTS.md a cada execução — mantemos nosso próprio AGENTS.md
+  // com documentação real do projeto.
+  agentRules: false,
   async headers() {
     return [
       {

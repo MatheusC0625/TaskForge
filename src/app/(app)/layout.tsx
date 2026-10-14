@@ -3,7 +3,6 @@ import { redirect } from "next/navigation";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { SignOutButton } from "@/components/sign-out-button";
-import { ThemeToggle } from "@/components/theme-toggle";
 
 export default async function AppLayout({ children }: { children: React.ReactNode }) {
   const session = await auth();
@@ -48,7 +47,6 @@ export default async function AppLayout({ children }: { children: React.ReactNod
           >
             {isPro ? "Pro" : "Free"}
           </Link>
-          <ThemeToggle />
           <SignOutButton />
         </div>
       </header>

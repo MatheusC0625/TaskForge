@@ -4,8 +4,10 @@ import { useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { signIn } from "next-auth/react";
+import { motion } from "motion/react";
 import { PasswordInput } from "@/components/ui/password-input";
 import { OAuthButtons } from "@/components/oauth-buttons";
+import { staggerContainer, fadeUpItem } from "@/lib/motion-variants";
 
 export function LoginForm({
   oauthProviders,
@@ -56,14 +58,20 @@ export function LoginForm({
   };
 
   return (
-    <form onSubmit={handleSubmit} className="flex w-full max-w-sm flex-col gap-3">
-      <OAuthButtons
-        github={oauthProviders.github}
-        google={oauthProviders.google}
-        callbackUrl={callbackUrl}
-      />
+    <motion.form
+      onSubmit={handleSubmit}
+      variants={staggerContainer}
+      className="flex w-full max-w-sm flex-col gap-3"
+    >
+      <motion.div variants={fadeUpItem}>
+        <OAuthButtons
+          github={oauthProviders.github}
+          google={oauthProviders.google}
+          callbackUrl={callbackUrl}
+        />
+      </motion.div>
 
-      <div>
+      <motion.div variants={fadeUpItem}>
         <label htmlFor="email" className="sr-only">
           E-mail
         </label>
@@ -78,9 +86,9 @@ export function LoginForm({
           onChange={(event) => setEmail(event.target.value)}
           className={fieldClass}
         />
-      </div>
+      </motion.div>
 
-      <div className="flex flex-col gap-1.5">
+      <motion.div variants={fadeUpItem} className="flex flex-col gap-1.5">
         <div className="flex items-center justify-end">
           <Link
             href="/forgot-password"
@@ -102,19 +110,23 @@ export function LoginForm({
           onChange={(event) => setPassword(event.target.value)}
           className={fieldClass}
         />
-      </div>
+      </motion.div>
 
       {error && <p className="text-sm text-red-600 dark:text-red-400">{error}</p>}
 
-      <button
+      <motion.button
+        variants={fadeUpItem}
         type="submit"
         disabled={isSubmitting}
         className="mt-2 rounded-lg bg-emerald-600 px-4 py-2.5 text-sm font-medium text-white transition hover:bg-emerald-700 active:scale-[0.98] disabled:opacity-60 dark:bg-emerald-500 dark:hover:bg-emerald-600"
       >
         {isSubmitting ? "Entrando..." : "Entrar"}
-      </button>
+      </motion.button>
 
-      <p className="text-center text-sm text-neutral-500 dark:text-neutral-400">
+      <motion.p
+        variants={fadeUpItem}
+        className="text-center text-sm text-neutral-500 dark:text-neutral-400"
+      >
         Não tem uma conta?{" "}
         <Link
           href="/register"
@@ -122,8 +134,8 @@ export function LoginForm({
         >
           Criar conta
         </Link>
-      </p>
-    </form>
+      </motion.p>
+    </motion.form>
   );
 }
 

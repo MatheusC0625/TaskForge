@@ -1,4 +1,7 @@
-import { ThemeToggle } from "@/components/theme-toggle";
+"use client";
+
+import { MotionConfig, motion } from "motion/react";
+import { staggerContainer, fadeUpItem } from "@/lib/motion-variants";
 
 export function AuthShell({
   title,
@@ -20,25 +23,28 @@ export function AuthShell({
         }}
       />
 
-      <div className="absolute top-4 right-4">
-        <ThemeToggle />
-      </div>
+      <MotionConfig reducedMotion="user">
+        <motion.div
+          initial="hidden"
+          animate="show"
+          variants={staggerContainer}
+          className="flex w-full max-w-sm flex-col items-center gap-8"
+        >
+          <motion.div variants={fadeUpItem} className="flex flex-col items-center gap-3 text-center">
+            <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-600 text-sm font-bold text-white dark:bg-emerald-500">
+              TF
+            </span>
+            <div className="flex flex-col gap-1">
+              <h1 className="text-2xl font-semibold text-neutral-900 dark:text-neutral-100">
+                {title}
+              </h1>
+              <p className="text-sm text-neutral-500 dark:text-neutral-400">{subtitle}</p>
+            </div>
+          </motion.div>
 
-      <div className="auth-card-enter flex w-full max-w-sm flex-col items-center gap-8">
-        <div className="flex flex-col items-center gap-3 text-center">
-          <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-600 text-sm font-bold text-white dark:bg-emerald-500">
-            TF
-          </span>
-          <div className="flex flex-col gap-1">
-            <h1 className="text-2xl font-semibold text-neutral-900 dark:text-neutral-100">
-              {title}
-            </h1>
-            <p className="text-sm text-neutral-500 dark:text-neutral-400">{subtitle}</p>
-          </div>
-        </div>
-
-        {children}
-      </div>
+          {children}
+        </motion.div>
+      </MotionConfig>
     </main>
   );
 }
