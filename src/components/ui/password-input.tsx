@@ -10,6 +10,7 @@ export function PasswordInput({
   autoComplete,
   required,
   minLength,
+  placeholder,
   className,
 }: {
   id: string;
@@ -19,6 +20,7 @@ export function PasswordInput({
   autoComplete?: string;
   required?: boolean;
   minLength?: number;
+  placeholder?: string;
   className?: string;
 }) {
   const [visible, setVisible] = useState(false);
@@ -32,6 +34,7 @@ export function PasswordInput({
         autoComplete={autoComplete}
         required={required}
         minLength={minLength}
+        placeholder={placeholder}
         value={value}
         onChange={onChange}
         className={`w-full pr-16 ${className ?? ""}`}
