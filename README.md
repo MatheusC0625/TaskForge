@@ -179,4 +179,14 @@ documentado como risco aceito estão em [`SECURITY.md`](./SECURITY.md).
 
 ## Sobre este projeto
 
-Este projeto foi construído, em grande parte, com o auxílio do **Claude** (Anthropic). Usei o desenvolvimento do TaskForge para me aprofundar no Claude Code e dominar a ferramenta como parte do meu fluxo de trabalho — sem deixar de lado minhas próprias habilidades técnicas e raciocínio, que guiaram cada decisão de arquitetura, revisão de código e critério de qualidade do produto final.
+O TaskForge foi construído **puramente com IA** — do primeiro commit ao deploy, nenhuma
+linha de código foi escrita manualmente. O objetivo não é "ter ajuda de IA pra
+programar", e sim demonstrar domínio de verdade sobre como conduzir ferramentas de IA
+num fluxo de desenvolvimento completo: arquitetura, decisões técnicas, revisão de
+segurança, testes automatizados e deploy — tudo via prompt, não via teclado.
+
+Ferramentas usadas e o papel de cada uma:
+
+- **Claude Code** — execução (implementação do código, testes, migrations, deploy e toda a iteração do projeto)
+- **ChatGPT** — melhoria de prompts e correções
+- **Gemini** — melhoria de prompts e correções
