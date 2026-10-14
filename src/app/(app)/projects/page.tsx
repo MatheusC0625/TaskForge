@@ -1,6 +1,8 @@
+import { FolderKanban } from "lucide-react";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { GithubRepoBadge } from "@/components/github-repo-badge";
+import { EmptyState } from "@/components/ui/empty-state";
 import { NewProjectButton } from "./new-project-button";
 import { ProjectCard } from "./project-card";
 
@@ -44,18 +46,15 @@ export default async function ProjectsPage({
       </div>
 
       {projects.length === 0 ? (
-        <div className="flex flex-1 flex-col items-center justify-center gap-3 rounded-xl border border-dashed border-neutral-300 py-20 text-center dark:border-neutral-700">
-          <p className="text-neutral-900 dark:text-neutral-100">Você ainda não tem projetos.</p>
-          <p className="max-w-xs text-sm text-neutral-500 dark:text-neutral-400">
-            Crie o primeiro projeto para organizar suas tarefas em um quadro Kanban.
-          </p>
-          <div className="mt-2">
-            <NewProjectButton isPro={isPro} />
-          </div>
-        </div>
+        <EmptyState
+          icon={FolderKanban}
+          title="Você ainda não tem projetos."
+          description="Crie o primeiro projeto para organizar suas tarefas em um quadro Kanban."
+          action={<NewProjectButton isPro={isPro} />}
+        />
       ) : (
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {projects.map((project) => (
+          {projects.map((project, index) => (
             <ProjectCard
               key={project.id}
               project={{
@@ -71,6 +70,7 @@ export default async function ProjectsPage({
                 <GithubRepoBadge key={repo.id} repoUrl={repo.url} />
               ))}
               isPro={isPro}
+              index={index}
             />
           ))}
         </div>

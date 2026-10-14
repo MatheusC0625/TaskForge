@@ -1,7 +1,10 @@
 import Link from "next/link";
+import { Inbox, CalendarClock } from "lucide-react";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { PriorityBadge } from "@/components/ui/priority-badge";
+import { Progress } from "@/components/ui/progress";
+import { EmptyState } from "@/components/ui/empty-state";
 import { formatDueDate, isOverdue } from "@/lib/date";
 import { PRIORITY_ORDER } from "@/lib/priority";
 import type { Priority } from "@/generated/prisma/enums";
@@ -78,34 +81,44 @@ export default async function DashboardPage() {
       </div>
 
       {projects.length === 0 ? (
-        <div className="flex flex-1 flex-col items-center justify-center gap-3 rounded-xl border border-dashed border-neutral-300 py-20 text-center dark:border-neutral-700">
-          <p className="text-neutral-900 dark:text-neutral-100">Você ainda não tem projetos.</p>
-          <p className="max-w-xs text-sm text-neutral-500 dark:text-neutral-400">
-            Crie o primeiro projeto para começar a organizar suas tarefas.
-          </p>
-          <Link
-            href="/projects"
-            className="mt-2 rounded-lg bg-emerald-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-emerald-700 active:scale-[0.98] dark:bg-emerald-500 dark:hover:bg-emerald-600"
-          >
-            Ir para Projetos
-          </Link>
-        </div>
+        <EmptyState
+          icon={Inbox}
+          title="Você ainda não tem projetos."
+          description="Crie o primeiro projeto para começar a organizar suas tarefas."
+          action={
+            <Link
+              href="/projects"
+              className="rounded-lg bg-emerald-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-emerald-700 active:scale-[0.98] dark:bg-emerald-500 dark:hover:bg-emerald-600"
+            >
+              Ir para Projetos
+            </Link>
+          }
+        />
       ) : (
         <>
           <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
-            <StatCard label="Projetos" value={projects.length} />
-            <StatCard label="Tarefas" value={totalTasks} />
+            <StatCard label="Projetos" value={projects.length} icon="projects" index={0} />
+            <StatCard label="Tarefas" value={totalTasks} icon="tasks" index={1} />
             <StatCard
               label="Concluídas"
               value={`${completionRate}%`}
               hint={`${doneTasks} de ${totalTasks}`}
+              icon="done"
+              index={2}
             />
-            <StatCard label="Atrasadas" value={overdueCount} tone="danger" />
+            <StatCard
+              label="Atrasadas"
+              value={overdueCount}
+              icon="overdue"
+              tone="danger"
+              index={3}
+            />
           </div>
 
           <div className="grid grid-cols-1 gap-8 lg:grid-cols-2">
             <section>
-              <h2 className="mb-3 text-sm font-medium text-neutral-700 dark:text-neutral-300">
+              <h2 className="mb-3 flex items-center gap-1.5 text-sm font-medium text-neutral-700 dark:text-neutral-300">
+                <CalendarClock className="h-4 w-4" strokeWidth={1.75} />
                 Próximos prazos
               </h2>
               {upcomingTasks.length === 0 ? (
@@ -157,14 +170,10 @@ export default async function DashboardPage() {
                     <div className="w-16">
                       <PriorityBadge priority={priority} />
                     </div>
-                    <div className="h-2 flex-1 rounded-full bg-neutral-100 dark:bg-neutral-800">
-                      <div
-                        className="h-2 rounded-full bg-emerald-600 dark:bg-emerald-500"
-                        style={{
-                          width: `${pendingTasks.length === 0 ? 0 : (count / pendingTasks.length) * 100}%`,
-                        }}
-                      />
-                    </div>
+                    <Progress
+                      value={pendingTasks.length === 0 ? 0 : (count / pendingTasks.length) * 100}
+                      className="flex-1"
+                    />
                     <span className="w-6 text-right text-xs text-neutral-500 dark:text-neutral-400">
                       {count}
                     </span>
