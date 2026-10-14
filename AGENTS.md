@@ -1,9 +1,35 @@
-<!-- BEGIN:nextjs-agent-rules -->
+# TaskForge — guia para agentes de IA
 
-# This is NOT the Next.js you know
+Gerenciador de tarefas estilo Kanban (Next.js App Router + TypeScript). Projeto de
+portfólio construído inteiramente com assistentes de IA — veja a seção "Sobre este
+projeto" no `README.md`.
 
-This version has breaking changes — APIs, conventions, and file structure may all differ from your training data. Read the relevant guide in `node_modules/next/dist/docs/` (resolved from this file's directory; in monorepos the `next` package may not be visible from the repo root) before writing any code. Heed deprecation notices.
+## Stack e comandos
 
-This block is written and re-added by `next dev` — verify at `node_modules/next/dist/server/lib/generate-agent-files.js`. Removing it from a diff only re-creates the uncommitted change; committing it with your work keeps the tree clean.
+- Next.js (App Router, Server Actions) + TypeScript, Tailwind CSS v4, Prisma + PostgreSQL, Auth.js v5.
+- `npm run lint` / `npm run typecheck` / `npm run test` (Vitest) / `npm run test:e2e` (Playwright) — rode antes de considerar qualquer mudança pronta.
+- `npx prisma migrate dev --name <nome>` para criar uma migration; `npx prisma generate` depois de qualquer mudança em `prisma/schema.prisma`.
 
-<!-- END:nextjs-agent-rules -->
+## Convenções do projeto
+
+- **A coluna é o status da tarefa** — não existe campo `status` separado; a posição da
+  tarefa no Kanban é a única fonte da verdade (inclusive para o cálculo de "concluída"
+  no dashboard).
+- **Toda mutação é uma Server Action em `src/lib/actions/`**, não uma rota de API
+  separada — e toda Server Action verifica a posse (*ownership*) do recurso antes de
+  ler ou escrever (ver `assertProjectOwner` e equivalentes). Nunca pule essa checagem
+  numa Server Action nova.
+- **Validação de input sempre via Zod** (`src/lib/validations/`) antes de montar
+  qualquer `data:` do Prisma — nunca repasse o input do usuário direto pro Prisma.
+- Sem campo novo em um formulário sem o campo correspondente no schema Zod.
+- Siga os padrões já documentados em `SECURITY.md` ao mexer em autenticação, rate
+  limiting ou qualquer rota pública.
+
+## O que não fazer
+
+- Não adicionar uma rota de API REST pra algo que pode ser uma Server Action.
+- Não introduzir um serviço externo como dependência obrigatória — Upstash, Resend e
+  Sentry são todos opcionais (o app funciona sem eles configurados); mantenha esse
+  padrão em features novas.
+- Não editar `src/generated/prisma/` — é gerado; rode `npx prisma generate` em vez
+  disso.
