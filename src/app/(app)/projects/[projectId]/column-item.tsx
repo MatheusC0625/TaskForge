@@ -82,7 +82,7 @@ export function ColumnItem({ column, taskCount, dragHandle }: ColumnItemProps) {
           {isMenuOpen && (
             <>
               <div className="fixed inset-0 z-10" onClick={() => setIsMenuOpen(false)} aria-hidden="true" />
-              <div className="absolute right-0 z-20 mt-1 w-44 rounded-lg border border-neutral-200 bg-[#f6f8fa] py-1 shadow-lg dark:border-neutral-800 dark:bg-[#161b22]">
+              <div className="absolute right-0 z-20 mt-1 w-44 rounded-lg border border-neutral-200 bg-[#f6f8fa] py-1 shadow-lg dark:border-neutral-800 dark:bg-[#111214]">
                 <button
                   type="button"
                   onClick={() => {

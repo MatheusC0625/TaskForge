@@ -1,9 +1,8 @@
 import Link from "next/link";
-import { ThemeToggle } from "@/components/theme-toggle";
 
 export function LandingPage() {
   return (
-    <main className="relative flex min-h-screen flex-1 flex-col overflow-hidden bg-white dark:bg-[#0d1117]">
+    <main className="relative flex min-h-screen flex-1 flex-col overflow-hidden bg-white dark:bg-[#07080a]">
       <div
         aria-hidden="true"
         className="pointer-events-none absolute inset-0 -z-10"
@@ -23,7 +22,6 @@ export function LandingPage() {
           </span>
         </div>
         <div className="flex items-center gap-2 sm:gap-3">
-          <ThemeToggle />
           <Link
             href="/login"
             className="rounded-full border border-neutral-300 px-3 py-2 text-sm font-medium whitespace-nowrap text-neutral-700 transition hover:bg-neutral-100 sm:px-4 dark:border-neutral-700 dark:text-neutral-300 dark:hover:bg-neutral-800"
@@ -43,7 +41,7 @@ export function LandingPage() {
         <div aria-hidden="true" className="pointer-events-none absolute inset-0 hidden lg:block">
           <div className="hero-card-enter absolute top-[18%] left-[8%] w-56" style={{ animationDelay: "0.1s" }}>
             <div className="hero-card-float" style={{ animationDuration: "4.4s", animationDelay: "0.7s" }}>
-              <div className="-rotate-6 rounded-lg border border-neutral-200 bg-[#f6f8fa] p-3 shadow-lg dark:border-neutral-800 dark:bg-[#161b22]">
+              <div className="-rotate-6 rounded-lg border border-neutral-200 bg-[#f6f8fa] p-3 shadow-lg dark:border-neutral-800 dark:bg-[#111214]">
                 <p className="text-sm font-medium text-neutral-900 dark:text-neutral-100">
                   Definir escopo da sprint
                 </p>
@@ -56,7 +54,7 @@ export function LandingPage() {
 
           <div className="hero-card-enter absolute top-[12%] right-[10%] w-48" style={{ animationDelay: "0.28s" }}>
             <div className="hero-card-float" style={{ animationDuration: "5.1s", animationDelay: "0.88s" }}>
-              <div className="rotate-3 rounded-lg border border-neutral-200 bg-white p-3 shadow-lg dark:border-neutral-800 dark:bg-[#161b22]">
+              <div className="rotate-3 rounded-lg border border-neutral-200 bg-white p-3 shadow-lg dark:border-neutral-800 dark:bg-[#111214]">
                 <div className="flex items-center justify-between">
                   <span className="text-sm font-medium text-neutral-900 dark:text-neutral-100">
                     QA/Testes

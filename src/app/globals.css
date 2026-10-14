@@ -1,15 +1,16 @@
 @import "tailwindcss";
 
-@custom-variant dark (&:where(.dark, .dark *));
-
 :root {
+  color-scheme: light dark;
   --background: #ffffff;
   --foreground: #171717;
 }
 
-.dark {
-  --background: #0d1117;
-  --foreground: #ededed;
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #07080a;
+    --foreground: #ededed;
+  }
 }
 
 @theme inline {
@@ -129,24 +130,3 @@ dialog[open]::backdrop {
   }
 }
 
-/* Cartão de login/cadastro: entra com fade + leve deslize ao carregar a página. */
-@keyframes auth-card-enter {
-  from {
-    opacity: 0;
-    transform: translateY(12px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.auth-card-enter {
-  animation: auth-card-enter 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .auth-card-enter {
-    animation: none;
-  }
-}
