@@ -187,6 +187,6 @@ segurança, testes automatizados e deploy — tudo via prompt, não via teclado.
 
 Ferramentas usadas e o papel de cada uma:
 
-- **Claude Code** — execução (implementação do código, testes, migrations, deploy e toda a iteração do projeto)
+- **Claude Code** — Commitar e arrumar erros de lógica/código
 - **ChatGPT** — melhoria de prompts e correções
 - **Gemini** — melhoria de prompts e correções
